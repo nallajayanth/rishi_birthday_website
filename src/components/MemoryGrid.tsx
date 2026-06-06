@@ -4,6 +4,26 @@ import { Lock, Unlock, Eye, X, HelpCircle, Trophy, ArrowLeft, ArrowRight, Search
 
 interface MemoryGridProps {
   onAllMatched: () => void;
+  persistCards: Card[];
+  setPersistCards: React.Dispatch<React.SetStateAction<Card[]>>;
+  persistMatches: number;
+  setPersistMatches: React.Dispatch<React.SetStateAction<number>>;
+  persistUnlockedGalleries: {
+    solo: boolean;
+    heart: boolean;
+    gossip: boolean;
+    friend: boolean;
+    sibling: boolean;
+    group: boolean;
+  };
+  setPersistUnlockedGalleries: React.Dispatch<React.SetStateAction<{
+    solo: boolean;
+    heart: boolean;
+    gossip: boolean;
+    friend: boolean;
+    sibling: boolean;
+    group: boolean;
+  }>>;
 }
 
 interface Card {
@@ -571,11 +591,21 @@ const ThreeDCard: React.FC<ThreeDCardProps> = ({ children, className = '', onCli
   );
 };
 
-export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
+export const MemoryGrid: React.FC<MemoryGridProps> = ({
+  onAllMatched,
+  persistCards,
+  setPersistCards,
+  persistMatches,
+  setPersistMatches,
+  persistUnlockedGalleries,
+  setPersistUnlockedGalleries
+}) => {
   // 1. Memory Game State
-  const [cards, setCards] = useState<Card[]>([]);
+  const cards = persistCards;
+  const setCards = setPersistCards;
   const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
-  const [matchesCount, setMatchesCount] = useState(0);
+  const matchesCount = persistMatches;
+  const setMatchesCount = setPersistMatches;
   
   // Unified Lightbox State
   const [lightbox, setLightbox] = useState<{ images: string[]; index: number; captions: string[] } | null>(null);
@@ -612,20 +642,15 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
   const [isGroupExpanded, setIsGroupExpanded] = useState<boolean>(false);
   
   // Gallery Unlock States (True when all pairs of that category are matched)
-  const [unlockedGalleries, setUnlockedGalleries] = useState({
-    solo: false,
-    heart: false,
-    gossip: false,
-    friend: false,
-    sibling: false,
-    group: false,
-  });
+  const unlockedGalleries = persistUnlockedGalleries;
+  const setUnlockedGalleries = setPersistUnlockedGalleries;
 
   // Highlight flash animations for newly unlocked galleries
   const [flashGallery, setFlashGallery] = useState<'solo' | 'heart' | 'gossip' | 'friend' | 'sibling' | 'group' | null>(null);
 
   // 2. Initialize Game Cards
   useEffect(() => {
+    if (cards.length > 0) return; // Skip if already initialized!
     const cardTemplates: Omit<Card, 'id' | 'isFlipped' | 'isMatched'>[] = [
       { pairId: 'solo-1', category: 'solo', label: 'Solo Portrait', imagePlaceholder: soloImageUrls[0] || 'path_to_solo_1.jpg' },
       { pairId: 'solo-1', category: 'solo', label: 'Solo Portrait', imagePlaceholder: soloImageUrls[0] || 'path_to_solo_1.jpg' },

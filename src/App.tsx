@@ -18,11 +18,25 @@ function App() {
   const [allMatched, setAllMatched] = useState(false);
   const [showPromise, setShowPromise] = useState(false);
 
+  // States to persist MemoryGrid (Unlock our memory vault) progress
+  const [memoryGridCards, setMemoryGridCards] = useState<any[]>([]);
+  const [memoryGridMatches, setMemoryGridMatches] = useState(0);
+  const [memoryGridUnlockedGalleries, setMemoryGridUnlockedGalleries] = useState({
+    solo: false,
+    heart: false,
+    gossip: false,
+    friend: false,
+    sibling: false,
+    group: false,
+  });
+
   // States to persist Family Memory Vault progress
   const [familyVaultCards, setFamilyVaultCards] = useState<any[]>([]);
   const [familyVaultMatches, setFamilyVaultMatches] = useState(0);
   const [familyVaultShowChapters, setFamilyVaultShowChapters] = useState(false);
   const [familyVaultSecretUnlocked, setFamilyVaultSecretUnlocked] = useState(false);
+  const [familyVaultCurrentChapterIdx, setFamilyVaultCurrentChapterIdx] = useState(0);
+  const [familyVaultShowCelebration, setFamilyVaultShowCelebration] = useState(false);
 
   // Auto-scroll to the Climax/Promise when manually triggered
   useEffect(() => {
@@ -96,7 +110,15 @@ function App() {
               className="w-full flex flex-col items-center"
             >
               {/* Game & Galleries */}
-              <MemoryGrid onAllMatched={() => setAllMatched(true)} />
+              <MemoryGrid 
+                onAllMatched={() => setAllMatched(true)}
+                persistCards={memoryGridCards}
+                setPersistCards={setMemoryGridCards}
+                persistMatches={memoryGridMatches}
+                setPersistMatches={setMemoryGridMatches}
+                persistUnlockedGalleries={memoryGridUnlockedGalleries}
+                setPersistUnlockedGalleries={setMemoryGridUnlockedGalleries}
+              />
 
               {/* Floating Button to Proceed to Final surprise */}
               {allMatched && !showPromise && (
@@ -149,6 +171,10 @@ function App() {
                 setPersistShowChapters={setFamilyVaultShowChapters}
                 persistSecretUnlocked={familyVaultSecretUnlocked}
                 setPersistSecretUnlocked={setFamilyVaultSecretUnlocked}
+                persistCurrentChapterIdx={familyVaultCurrentChapterIdx}
+                setPersistCurrentChapterIdx={setFamilyVaultCurrentChapterIdx}
+                persistShowCelebration={familyVaultShowCelebration}
+                setPersistShowCelebration={setFamilyVaultShowCelebration}
               />
             </motion.div>
           )}

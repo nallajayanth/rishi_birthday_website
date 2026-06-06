@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Unlock, ArrowLeft, ArrowRight, Heart, Star, Sparkles, Home, User, Play, Pause, X } from 'lucide-react';
+import { Lock, Unlock, ArrowLeft, ArrowRight, Heart, Star, Sparkles, Home, User, Play, Pause, X, Camera } from 'lucide-react';
 
 interface FamilyCard {
   id: number;
@@ -30,6 +30,10 @@ interface FamilyMemoryVaultProps {
   setPersistShowChapters: React.Dispatch<React.SetStateAction<boolean>>;
   persistSecretUnlocked: boolean;
   setPersistSecretUnlocked: React.Dispatch<React.SetStateAction<boolean>>;
+  persistCurrentChapterIdx: number;
+  setPersistCurrentChapterIdx: React.Dispatch<React.SetStateAction<number>>;
+  persistShowCelebration: boolean;
+  setPersistShowCelebration: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // 1. Dynamically import all family photos inside src/assets/family
@@ -50,6 +54,24 @@ const heartImageUrls = Object.keys(heartImagesGlob)
   .sort((a, b) => getHeartNumber(a) - getHeartNumber(b))
   .map((key) => {
     const module = heartImagesGlob[key] as any;
+    return module.default || module;
+  });
+
+// Dynamically import all brother_sister images inside src/assets/brother_sister
+const siblingImagesGlob = import.meta.glob('../assets/brother_sister/sibling_*.jpeg', { eager: true });
+
+const getSiblingNumber = (filename: string): number => {
+  const match = filename.match(/sibling_(\d+)\.jpeg$/i);
+  if (match) return parseInt(match[1], 10);
+  
+  const prodMatch = filename.match(/sibling_(\d+)-[\w\d]+\.jpeg$/i);
+  return prodMatch ? parseInt(prodMatch[1], 10) : 999;
+};
+
+const siblingImageUrls = Object.keys(siblingImagesGlob)
+  .sort((a, b) => getSiblingNumber(a) - getSiblingNumber(b))
+  .map((key) => {
+    const module = siblingImagesGlob[key] as any;
     return module.default || module;
   });
 
@@ -190,7 +212,11 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
   persistShowChapters,
   setPersistShowChapters,
   persistSecretUnlocked,
-  setPersistSecretUnlocked
+  setPersistSecretUnlocked,
+  persistCurrentChapterIdx,
+  setPersistCurrentChapterIdx,
+  persistShowCelebration,
+  setPersistShowCelebration
 }) => {
   const cards = persistCards;
   const setCards = setPersistCards;
@@ -200,15 +226,25 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
   const setShowChapters = setPersistShowChapters;
   const isHeartSecretUnlocked = persistSecretUnlocked;
   const setIsHeartSecretUnlocked = setPersistSecretUnlocked;
+  const currentChapterIdx = persistCurrentChapterIdx;
+  const setCurrentChapterIdx = setPersistCurrentChapterIdx;
+  const showCelebration = persistShowCelebration;
+  const setShowCelebration = setPersistShowCelebration;
 
   const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
   const [activeTab, setActiveTab] = useState<'chapters' | 'album'>('chapters');
-  const [currentChapterIdx, setCurrentChapterIdx] = useState(0);
   const [direction, setDirection] = useState(0); // -1 for prev, 1 for next
-  const [showCelebration, setShowCelebration] = useState(false);
   const [showChapter5Prompt, setShowChapter5Prompt] = useState(false);
   const [showMagicTransition, setShowMagicTransition] = useState(false);
   const [polaroidStack, setPolaroidStack] = useState<number[]>([0, 1, 2]);
+  
+  // Choice Prompt for Ending / Family Album
+  const [showEndChoicePrompt, setShowEndChoicePrompt] = useState(false);
+  
+  // Sibling Ending states
+  const [siblingPolaroidStack, setSiblingPolaroidStack] = useState<number[]>([0, 1, 2, 3, 4]);
+  const [showSiblingPromise, setShowSiblingPromise] = useState(false);
+  const [floatingHearts, setFloatingHearts] = useState<{ id: number; x: number; y: number; size: number }[]>([]);
   
   // Evasion & PIN lock states
   const [endButtonOffset, setEndButtonOffset] = useState({ x: 0, y: 0 });
@@ -271,6 +307,35 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
       setShowMagicTransition(false);
       setCurrentChapterIdx(4); // Advance to Chapter 5
     }, 2500);
+  };
+
+  const rotateSiblingPolaroidStack = () => {
+    if (window.playUISfx) window.playUISfx('click');
+    setSiblingPolaroidStack((prev) => {
+      const next = [...prev];
+      const first = next.shift();
+      if (first !== undefined) {
+        next.push(first);
+      }
+      return next;
+    });
+  };
+
+  const handlePromiseReveal = () => {
+    if (window.playUISfx) window.playUISfx('win');
+    setShowSiblingPromise(true);
+    
+    // Generate floating hearts
+    const hearts = Array.from({ length: 15 }).map((_, i) => ({
+      id: Date.now() + i,
+      x: (Math.random() - 0.5) * 240,
+      y: (Math.random() - 0.5) * 120,
+      size: Math.random() * 20 + 10,
+    }));
+    setFloatingHearts(hearts);
+    setTimeout(() => {
+      setFloatingHearts([]);
+    }, 3000);
   };
 
   // Lightbox & Slideshow state for Family Album
@@ -445,7 +510,7 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
       // Intercept going to Chapter 5
       setShowChapter5Prompt(true);
     } else if (currentChapterIdx === chapters.length - 1) {
-      setShowCelebration(true);
+      setShowEndChoicePrompt(true);
     } else {
       setDirection(1);
       setCurrentChapterIdx((prev) => prev + 1);
@@ -929,61 +994,201 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-xl p-8 md:p-12 glass-panel rounded-3xl border border-white/10 shadow-2xl text-center space-y-8 bg-gradient-to-br from-zinc-950 via-zinc-900 to-violet-950/20 relative overflow-hidden"
+            className="w-full max-w-4xl p-8 md:p-12 glass-panel rounded-3xl border border-white/10 shadow-2xl bg-gradient-to-br from-zinc-950 via-zinc-900 to-violet-950/20 relative overflow-hidden flex flex-col md:flex-row items-center gap-10 md:gap-12"
           >
+            {/* Ambient glows */}
             <div className="absolute -top-10 -left-10 w-44 h-44 bg-biolum-pink/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
             <div className="absolute -bottom-10 -right-10 w-44 h-44 bg-biolum-purple/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
 
-            <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-tr from-amber-400 via-rose-500 to-purple-600 flex items-center justify-center shadow-lg shadow-rose-500/20">
-              <Heart size={28} className="text-white fill-white animate-pulse" />
+            {/* Floating Hearts Container */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              <AnimatePresence>
+                {floatingHearts.map((h) => (
+                  <motion.div
+                    key={h.id}
+                    initial={{ opacity: 1, scale: 0, x: 0, y: 0 }}
+                    animate={{
+                      opacity: 0,
+                      scale: [0, 1.5, 0.8],
+                      x: h.x,
+                      y: h.y - 180,
+                      rotate: Math.random() * 360,
+                    }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 2.2, ease: 'easeOut' }}
+                    className="absolute text-rose-400"
+                    style={{ left: '50%', top: '50%', fontSize: `${h.size}px` }}
+                  >
+                    ❤️
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
 
-            <div className="space-y-4">
-              <h2 className="font-serif italic text-4xl md:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-rose-300 to-violet-300 font-extrabold tracking-wide drop-shadow glow-pink">
-                Happy Birthday, Rishi!
-              </h2>
-              <p className="font-serif text-lg text-zinc-300 italic max-w-md mx-auto leading-relaxed">
-                "Our family is complete because of you. Your chapters are the stories we cherish the most."
-              </p>
-            </div>
-
-            <div className="border-t border-white/5 pt-8 max-w-xs mx-auto space-y-1">
-              <p className="font-mono text-[10px] tracking-[0.3em] text-zinc-500 uppercase font-semibold">
-                WITH ENDLESS LOVE & BLESSINGS
-              </p>
-              <h4 className="font-serif text-xl italic font-semibold text-amber-300">
-                From Your Entire Family 🤍
-              </h4>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <button
-                onClick={() => {
-                  if (window.playUISfx) window.playUISfx('click');
-                  setShowCelebration(false);
-                  setCurrentChapterIdx(0);
-                  setActiveTab('chapters');
-                }}
-                className="px-6 py-3 border border-white/10 rounded-xl font-mono text-[11px] uppercase tracking-wider text-zinc-400 hover:border-white/25 hover:text-white cursor-pointer transition-all active:scale-95"
-              >
-                Replay Chapters
-              </button>
-              <button
-                onClick={() => {
-                  if (window.playUISfx) window.playUISfx('click');
-                  setShowChapters(false);
-                  setShowCelebration(false);
-                  setMatchesCount(0);
-                  setCards((prev) =>
-                    prev
-                      .map((c) => ({ ...c, isFlipped: false, isMatched: false }))
-                      .sort(() => Math.random() - 0.5)
+            {/* Left Column: Sibling Polaroid Stack */}
+            <div className="flex-shrink-0 flex flex-col items-center">
+              <h3 className="font-mono text-[9px] tracking-[0.2em] text-zinc-400 uppercase font-bold mb-8">
+                Tap polaroids to rotate memories 📸
+              </h3>
+              
+              <div className="relative w-64 h-80 flex items-center justify-center select-none">
+                {siblingPolaroidStack.map((imgIdx, stackIdx) => {
+                  const isTop = stackIdx === siblingPolaroidStack.length - 1;
+                  const rotation = (stackIdx - 2) * 4 + (isTop ? 0 : (Math.random() - 0.5) * 6);
+                  const scale = 0.9 + stackIdx * 0.025;
+                  const yOffset = (siblingPolaroidStack.length - 1 - stackIdx) * -12;
+                  
+                  return (
+                    <motion.div
+                      key={imgIdx}
+                      onClick={isTop ? rotateSiblingPolaroidStack : undefined}
+                      className={`absolute w-52 bg-white p-3 pb-8 rounded-xl shadow-2xl border border-zinc-200 cursor-pointer ${
+                        isTop ? 'z-30 hover:scale-105' : 'pointer-events-none'
+                      }`}
+                      style={{
+                        transformStyle: 'preserve-3d',
+                        transformOrigin: 'bottom center',
+                      }}
+                      animate={{
+                        rotate: rotation,
+                        scale: scale,
+                        y: yOffset,
+                        zIndex: stackIdx,
+                      }}
+                      whileHover={isTop ? { y: yOffset - 8, rotate: rotation + 1 } : {}}
+                      transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+                    >
+                      <div className="w-full aspect-[4/5] bg-zinc-100 rounded overflow-hidden relative">
+                        <img
+                          src={siblingImageUrls[imgIdx % siblingImageUrls.length]}
+                          alt={`Sibling Memory ${imgIdx + 1}`}
+                          className="w-full h-full object-cover filter brightness-95 contrast-105"
+                        />
+                      </div>
+                      <div className="mt-3 text-center">
+                        <span className="font-serif italic text-[11px] text-zinc-700 font-semibold block truncate">
+                          {imgIdx % 2 === 0 ? "Through Thick & Thin 🛡️" : "Best Sibling Bond 🤍"}
+                        </span>
+                      </div>
+                    </motion.div>
                   );
-                }}
-                className="px-6 py-3 bg-gradient-to-r from-biolum-pink to-biolum-purple text-white font-semibold rounded-xl cursor-pointer shadow hover:shadow-[0_0_15px_rgba(255,42,133,0.3)] font-mono text-[11px] uppercase tracking-wider transition-all active:scale-95"
-              >
-                Reset matching Game
-              </button>
+                })}
+              </div>
+            </div>
+
+            {/* Right Column: Sibling Letter & Promise */}
+            <div className="flex-1 w-full space-y-6 text-center md:text-left flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 justify-center md:justify-start">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-300 text-[10px] font-mono tracking-wider uppercase">
+                    <Star size={10} className="text-rose-400 fill-rose-400" />
+                    The Grand Finale
+                  </span>
+                </div>
+                <h2 className="font-serif italic text-3xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-rose-300 to-violet-300 font-extrabold tracking-wide drop-shadow glow-pink leading-tight">
+                  Happy 20th Birthday, Amma!
+                </h2>
+                
+                {/* Brother's handwritten-style letter */}
+                <div className="glass-panel border border-white/5 bg-white/2 p-6 rounded-2xl space-y-3 font-serif italic text-[13px] md:text-sm text-zinc-300 leading-relaxed text-left shadow-inner">
+                  <p>Dearest Amma,</p>
+                  <p>
+                    As we reach the end of this digital vault of memories, I wanted to leave you with a message straight from my heart. Building this website of our life's special moments was my little way of trying to make you smile—because you deserve all the happiness in the world on your 20th birthday.
+                  </p>
+                  <p>
+                    Distance, times, or whatever obstacles life throws at us will never change the fact that you will always be my favorite person. I will always stand by you, cheer for you, and protect you in every step of your journey.
+                  </p>
+                  <p className="text-right font-semibold text-amber-200 mt-4">— Always & Forever, Your Brother 🤍</p>
+                </div>
+              </div>
+
+              {/* Interactive Sibling Promise Button and Text */}
+              <div className="space-y-4">
+                <AnimatePresence mode="wait">
+                  {!showSiblingPromise ? (
+                    <motion.button
+                      key="promise-btn"
+                      onClick={handlePromiseReveal}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      className="w-full py-3.5 bg-gradient-to-r from-amber-300 to-amber-400 hover:shadow-[0_0_20px_rgba(252,211,77,0.35)] text-zinc-950 font-bold rounded-xl cursor-pointer transition-all duration-300 text-xs font-mono tracking-widest uppercase flex items-center justify-center gap-2 shadow"
+                    >
+                      <Sparkles size={14} className="animate-pulse" />
+                      Reveal Our Sibling Promise 🤝
+                    </motion.button>
+                  ) : (
+                    <motion.div
+                      key="promise-text"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="p-4 rounded-xl border border-rose-500/20 bg-rose-500/5 shadow-[0_0_15px_rgba(244,63,94,0.1)] text-center space-y-1.5"
+                    >
+                      <h4 className="font-serif italic text-xs text-rose-300 font-bold flex items-center justify-center gap-1">
+                        ❤️ Sibling Lifetime Promise
+                      </h4>
+                      <p className="font-serif italic text-[11px] text-zinc-300 leading-relaxed max-w-md mx-auto">
+                        "No matter where we go, or how busy we get, I promise to always listen, always care, and always protect you. You will never have to face the world alone."
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Final Navigation Actions */}
+                <div className="flex flex-wrap gap-3 justify-center md:justify-start pt-2">
+                  <button
+                    onClick={() => {
+                      if (window.playUISfx) window.playUISfx('click');
+                      setActiveTab('album');
+                      setShowChapters(true);
+                      setShowCelebration(false);
+                    }}
+                    className="px-4 py-2.5 border border-amber-500/20 bg-amber-500/5 text-amber-300 hover:bg-amber-500/10 rounded-xl font-mono text-[10px] uppercase tracking-wider cursor-pointer transition-all active:scale-95 flex items-center gap-1.5"
+                  >
+                    <Camera size={12} />
+                    Family Album
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      if (window.playUISfx) window.playUISfx('click');
+                      setShowCelebration(false);
+                      setShowChapters(false);
+                    }}
+                    className="px-4 py-2.5 border border-white/10 text-zinc-400 hover:border-white/20 hover:text-white rounded-xl font-mono text-[10px] uppercase tracking-wider cursor-pointer transition-all active:scale-95"
+                  >
+                    Family Grid
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      if (window.playUISfx) window.playUISfx('click');
+                      setShowCelebration(false);
+                      setCurrentChapterIdx(0);
+                      setActiveTab('chapters');
+                    }}
+                    className="px-4 py-2.5 border border-white/10 text-zinc-400 hover:border-white/20 hover:text-white rounded-xl font-mono text-[10px] uppercase tracking-wider cursor-pointer transition-all active:scale-95"
+                  >
+                    Replay Chapters
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      if (window.playUISfx) window.playUISfx('click');
+                      setShowChapters(false);
+                      setShowCelebration(false);
+                      setMatchesCount(0);
+                      setCards((prev) =>
+                        prev
+                          .map((c) => ({ ...c, isFlipped: false, isMatched: false }))
+                          .sort(() => Math.random() - 0.5)
+                      );
+                    }}
+                    className="px-4 py-2.5 bg-red-950/20 border border-red-500/20 hover:bg-red-950/40 text-red-400 rounded-xl font-mono text-[10px] uppercase tracking-wider cursor-pointer transition-all active:scale-95"
+                  >
+                    Reset Game
+                  </button>
+                </div>
+              </div>
             </div>
           </motion.div>
         )}
@@ -1041,6 +1246,80 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
                 >
                   End Here & Celebrate
                 </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* End Choice Prompt */}
+      <AnimatePresence>
+        {showEndChoicePrompt && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="w-full max-w-md glass-panel p-8 rounded-3xl border border-amber-500/20 shadow-[0_0_30px_rgba(252,211,77,0.15)] bg-gradient-to-br from-zinc-950 via-zinc-900 to-amber-950/20 text-center space-y-6 relative overflow-hidden"
+            >
+              <div className="absolute -top-10 -left-10 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl pointer-events-none" />
+              
+              <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shadow-[0_0_20px_rgba(252,211,77,0.25)] animate-pulse">
+                <Star size={28} className="text-amber-400 fill-amber-400/20" />
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="font-serif italic text-2xl text-amber-200 font-bold">
+                  A Journey of Memories Completed 🌟
+                </h3>
+                <p className="font-sans text-sm text-zinc-300 leading-relaxed">
+                  You've unlocked and read all the chapters, Rishi! Where would you like to go next?
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 pt-2">
+                <button
+                  onClick={() => {
+                    if (window.playUISfx) window.playUISfx('click');
+                    setActiveTab('album');
+                    setShowChapters(true);
+                    setShowCelebration(false);
+                    setShowEndChoicePrompt(false);
+                  }}
+                  className="w-full py-3 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl cursor-pointer border border-white/10 hover:border-white/20 transition-all duration-300 active:scale-95 text-xs font-mono tracking-wider uppercase flex items-center justify-center gap-1.5"
+                >
+                  <Camera size={14} className="text-amber-400" />
+                  Explore Family Album 📸
+                </button>
+
+                <button
+                  onClick={() => {
+                    if (window.playUISfx) window.playUISfx('win');
+                    setShowCelebration(true);
+                    setShowEndChoicePrompt(false);
+                  }}
+                  className="w-full py-3 bg-gradient-to-r from-biolum-pink to-biolum-purple text-white font-semibold rounded-xl cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(255,42,133,0.4)] transition-all duration-300 active:scale-95 text-xs font-mono tracking-wider uppercase flex items-center justify-center gap-1.5"
+                >
+                  <Heart size={14} className="text-white animate-pulse" />
+                  Go to Sibling Ending (End Here) 💖
+                </button>
+
+                <button
+                  onClick={() => {
+                    if (window.playUISfx) window.playUISfx('click');
+                    setShowEndChoicePrompt(false);
+                  }}
+                  className="w-full py-3 border border-white/10 rounded-xl font-mono text-[11px] uppercase tracking-wider text-zinc-500 hover:text-zinc-300 cursor-pointer transition-all select-none"
+                >
+                  Cancel & Go Back
+                </button>
               </div>
             </motion.div>
           </motion.div>
