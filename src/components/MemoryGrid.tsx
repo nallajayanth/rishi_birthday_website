@@ -9,7 +9,7 @@ interface MemoryGridProps {
 interface Card {
   id: number;
   pairId: string;      // e.g. 'solo-1', 'solo-2'
-  category: 'solo' | 'heart' | 'gossip' | 'friend' | 'sibling';
+  category: 'solo' | 'heart' | 'gossip' | 'friend' | 'sibling' | 'group';
   imagePlaceholder: string;
   label: string;
   isFlipped: boolean;
@@ -68,10 +68,65 @@ const soloCaptions = [
   "Captivating Eyes 👁️", "Shine Like a Diamond 💎", "Glowing from Within ✨", "Chasing Sunsets 🌇",
   "Classy Look 🎩", "Heart of Gold 💛", "Unstoppable Force 🚀", "Perfect Framing 🖼️",
   "Simply Iconic 🌟", "Radiating Positivity ☀️", "Cherished Snapshot 📸", "Joyful Spirit 🎉",
-  "Elegance Redefined ✨", "A Beautiful Soul 🤍"
+  "Elegance Redefined ✨", "A Beautiful Soul 🤍",
+  "Traditional Grace & Colorful Canopy 🌸✨",
+  "Sunkissed Smiles & Endless Horizons 🌅🕶️",
+  "Temple Radiance & Divine Vibe 🪔❤️",
+  "Teeing Off in Style 🏌️‍♀️⛳",
+  "Chikankari Grace & Bougainvillea Blooms 🌸🌿",
+  "Rooftop Starlight & Whispering Wind 🌌✨",
+  "Concert Chic & Slaying the Night 🖤🎵",
+  "Splash of Joy at Wonderla! 🌊✌️",
+  "Overcast Sky & Yellow Florals ⛅🌼",
+  "Quiet Night Walks & Cozy Flannel 🌲🌙",
+  "Bright Campus Days & Warm Smiles 🏫🎓",
+  "Vibrant Lehenga & Festivity Joy 🦚💜",
+  "Chasing Forest Sunsets & Golden Dreams 🌅🌲",
+  "Blessed Moments & Gopuram Graces 🪔🙏",
+  "Nature's Frame & Forest Adventures 🌳🍃",
+  "Royal Blue & Sacred Serenity 💙✨",
+  "Terrace Musings & Pastel Hues ⛅🌸",
+  "Skyline Smile & Clear Confident Gaze 🏙️💙",
+  "Bicycle Path & Bougainvillea Trail 🚲🌸",
+  "Breeze in My Hair, Peace in My Soul 🌬️✨",
+  "Rooftop Ukulele & Nighttime Serenade 🎶🎸",
+  "Super Hero Energy & Casual Coolness 🦸‍♀️🖤",
+  "Fairground Lights & Carnival Magic 🎡✨",
+  "Spinning Carousel & Endless Joy 🎠💖"
 ];
 
 const getTagsForIndex = (index: number) => {
+  const customTags: { [key: number]: string[] } = {
+    62: ['Elegant', 'Aesthetic'],
+    63: ['Smile', 'Glow'],
+    64: ['Elegant', 'Glow'],
+    65: ['Candid', 'Aesthetic'],
+    66: ['Elegant', 'Aesthetic'],
+    67: ['Smile', 'Glow'],
+    68: ['Elegant', 'Queen'],
+    69: ['Candid', 'Smile'],
+    70: ['Smile', 'Aesthetic'],
+    71: ['Candid', 'Aesthetic'],
+    72: ['Smile', 'Candid'],
+    73: ['Elegant', 'Aesthetic'],
+    74: ['Candid', 'Glow'],
+    75: ['Smile', 'Elegant'],
+    76: ['Candid', 'Smile'],
+    77: ['Elegant', 'Queen'],
+    78: ['Aesthetic', 'Glow'],
+    79: ['Smile', 'Glow'],
+    80: ['Candid', 'Aesthetic'],
+    81: ['Candid', 'Smile'],
+    82: ['Candid', 'Aesthetic'],
+    83: ['Smile', 'Queen'],
+    84: ['Smile', 'Glow'],
+    85: ['Smile', 'Glow']
+  };
+
+  if (customTags[index] !== undefined) {
+    return customTags[index];
+  }
+
   const tagPools = [
     ['Elegant', 'Slay'],
     ['Candid', 'Glow'],
@@ -120,7 +175,22 @@ const friendCaptions = [
   "Side by Side or Miles Apart 🗺️", "Double Trouble 😈😈", "Soul Sisters 🌸", "Chasing Adventures Together ⛰️",
   "Silly Faces, Warm Hearts 🤪", "Always Got Your Back 🛡️", "The Dream Team 🏆", "Therapy Sessions with Besties 🗣️",
   "Making Every Second Count ⏱️", "Endless Banter & Inside Jokes 💬", "Through Thick & Thin 🤞", "Pure Happiness with You 😊",
-  "Our Own Little World ⚖️", "Forever & Always ♾️"
+  "Our Own Little World ⚖️", "Forever & Always ♾️",
+  "Two pretty best friends slaying the day 💅✨",
+  "Making ordinary days extraordinary with you! 🌸💫",
+  "Laughter is loudest when we are together 😂❤️",
+  "Blessed with the absolute best friends 🙏🤍",
+  "Through every laugh, every tear, and every selfie 📸💞",
+  "No new friends, just the absolute gold ones 🥇💛",
+  "Late night talks and matching energy levels ⚡🗣️",
+  "Silly poses and endless comfort zone 😜🛌",
+  "Chasing suns and making memories 🌅🎒",
+  "Friends who become family 🏡💖",
+  "Always holding each other up, no matter what 🤝🌸",
+  "Smiling through life with you by my side 😊✨",
+  "Our friendship is like a cup of warm hot cocoa on a winter night ☕❄️",
+  "Pure sunshine in human form! Love you bestie ☀️🥰",
+  "To the moon and back, forever best friends 🌙💫"
 ];
 
 const getFriendTagsForIndex = (index: number) => {
@@ -260,12 +330,198 @@ const gossipGalleryData = gossipImageUrls.map((url, index) => {
   };
 });
 
-const siblingImageUrls = [
-  'https://images.unsplash.com/photo-1581579438747-1dc8d1e0ca96?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1475669698648-2f144fcaaeb1?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=80',
+// Dynamically import all brother_sister images inside src/assets/brother_sister
+const siblingImagesGlob = import.meta.glob('../assets/brother_sister/sibling_*.jpeg', { eager: true });
+
+const getSiblingNumber = (filename: string): number => {
+  const match = filename.match(/sibling_(\d+)\.jpeg$/i);
+  if (match) return parseInt(match[1], 10);
+  
+  // Try matching with production hash: e.g. sibling_1-DWDRah3f.jpeg
+  const prodMatch = filename.match(/sibling_(\d+)-[\w\d]+\.jpeg$/i);
+  return prodMatch ? parseInt(prodMatch[1], 10) : 999;
+};
+
+const siblingImageUrls = Object.keys(siblingImagesGlob)
+  .sort((a, b) => getSiblingNumber(a) - getSiblingNumber(b))
+  .map((key) => {
+    const module = siblingImagesGlob[key] as any;
+    return module.default || module;
+  });
+
+const siblingCaptions = [
+  "No matter how old we get, we'll always be the same silly kids pulling faces at each other! 🎡😜",
+  "Seeing you happy and smiling is the best part of any celebration. You deserve the world! ✨👫",
+  "Side-by-side or miles apart, we are connected by a bond that can never be broken. 📸💜",
+  "Adore you, tease you, and squeeze your cheeks! Thanks for always being my sweet sister, even when I'm annoying. 😂❤️",
+  "Cafe dates and deep talks. I'm so lucky to have a sister who is also my best friend. ☕✨",
+  "Cherishing the simple moments with you. Your laughter makes our home so much brighter! 🌸💛",
+  "Golden hour with my constant. No matter where life takes us, I'll always have your back! 🌅🧡",
+  "Having you by my side makes every journey easier. Cheers to more food, fun, and endless laughs! 🍕🥤",
+  "Temple visits and prayers for you. Thankful to God every day for blessing me with a sister like you. 🪔🙏",
+  "No matter how much we tease, fight, or pull faces, you will always be my favorite human! 🎢👊"
 ];
+
+const getSiblingTagsForIndex = (index: number) => {
+  const tagPools = [
+    ['Silly Us', 'Fair'],
+    ['Celebrations', 'Us'],
+    ['Selfie', 'Bond'],
+    ['Candid', 'Love'],
+    ['Cafe Date', 'Bestie'],
+    ['Happy Times', 'Family'],
+    ['Sunset', 'Constant'],
+    ['Foodies', 'Laughter'],
+    ['Blessed', 'Prayers'],
+    ['Favorite', 'Forever']
+  ];
+  return tagPools[index % tagPools.length];
+};
+
+const siblingGalleryData = siblingImageUrls.map((url, index) => {
+  const num = getSiblingNumber(url);
+  const captionIndex = num - 1;
+  return {
+    id: 300 + index,
+    image: url,
+    caption: siblingCaptions[captionIndex] || `Brother & Sister Memory #${num} 🤍`,
+    tags: getSiblingTagsForIndex(num - 1)
+  };
+});
+
+// Dynamically import all group photos inside src/assets/group_photos
+const groupImagesGlob = import.meta.glob('../assets/group_photos/group_*.jpeg', { eager: true });
+
+const getGroupNumber = (filename: string): number => {
+  const match = filename.match(/group_(\d+)\.jpeg$/i);
+  if (match) return parseInt(match[1], 10);
+  
+  // Try matching with production hash: e.g. group_1-DWDRah3f.jpeg
+  const prodMatch = filename.match(/group_(\d+)-[\w\d]+\.jpeg$/i);
+  return prodMatch ? parseInt(prodMatch[1], 10) : 999;
+};
+
+const groupFeaturedNumbers = [33, 25, 2, 46];
+
+const groupImageUrls = Object.keys(groupImagesGlob)
+  .sort((a, b) => {
+    const numA = getGroupNumber(a);
+    const numB = getGroupNumber(b);
+    
+    const featIdxA = groupFeaturedNumbers.indexOf(numA);
+    const featIdxB = groupFeaturedNumbers.indexOf(numB);
+    
+    if (featIdxA !== -1 && featIdxB !== -1) {
+      return featIdxA - featIdxB;
+    }
+    if (featIdxA !== -1) return -1;
+    if (featIdxB !== -1) return 1;
+    
+    return numA - numB;
+  })
+  .map((key) => {
+    const module = groupImagesGlob[key] as any;
+    return module.default || module;
+  });
+
+const groupCaptions = [
+  "Smiling bright with my favorite human! Duo magic ✨🌸",
+  "Sitting peacefully on the temple steps. Blessed moments with the squad 🪔🙏",
+  "Pure adrenaline and splashy fun at Wonderla! Duo adventures 🌊🎢",
+  "Sweet smiles and warm cozy vibes. Always happy with you! 🤍😊",
+  "Candid laughter is the best kind of laughter! Capturing real joy ✨📸",
+  "Mirror selfie double trouble! Slaying our look 💅🔥",
+  "Late night bus rides and endless chatter. Traveling in style 🚌🌌",
+  "Squad assembly point! Ready for another epic adventure together 🎒🌲",
+  "Divine blessings and group selfies at the temple gopuram 🪔✨",
+  "Sun-kissed selfie! Glowing up together, side by side ☀️💖",
+  "The ultimate squad goal. So much love in one single frame! 👭🏆",
+  "Chasing cafe dates and sharing sweet treats with the bestie 🍰☕",
+  "Smiling through the breeze. You make every day brighter! 🌬️🌸",
+  "Happy faces gathered for the best kind of celebration 🎉🥳",
+  "Double the cuteness! Sweetest selfie with my favorite partner in crime 🥰🎀",
+  "Crazy squad, louder laughter! Making memories that will last forever 🤪💫",
+  "Quiet walks and cozy talks. Cherishing these little moments 🍃🤍",
+  "Sunset views and endless chats. Best times are with you 🌅✨",
+  "Glow-up selfie! Two pretty best friends slaying the day 💎💅",
+  "Chilling out and catching up. Effortlessly cool vibes only 👟✌️",
+  "Bright eyes and wide smiles. Happiness is homemade with you! 😄💛",
+  "Casual day out, but make it look absolutely fab! 👗🕶️",
+  "A bond like no other. Always holding hands through life's ride 🤝💖",
+  "When the whole squad shows up, chaos and fun are guaranteed! 💥😂",
+  "Warm hugs and sweet memories. So grateful for this friendship 🤗💕",
+  "Silly poses and inside jokes. Nobody gets me like you do! 😜🃏",
+  "Sparkling eyes and beautiful smiles. Radiating pure joy 🌟🤍",
+  "Elegant and classy. Slaying our traditional look together! 🦚✨",
+  "Outing diaries! Exploring new places with the favorite crew 🗺️🌲",
+  "A perfect portrait of friendship. Forever and always ♾️🎀",
+  "Laughter is louder when we are together. Duo diaries 😄❤️",
+  "Sweet moments and endless peace. So glad you're in my life 🕊️💛",
+  "Two peas in a pod. Sharing all the gossip and smiles ☕💬",
+  "Squad goals unlocked! Every outing with you guys is an adventure 🎒⛰️",
+  "Charming look and gorgeous smiles. Fab duo vibe 💫💅",
+  "Gathered under the open sky. Endless conversations and laughter ⛅🌻",
+  "Selfie time! Brightening up the day with your lovely smile 🥰☀️",
+  "Happy heart and glowing faces. Truly blessed 🤍🪔",
+  "Candid giggles. The best moments are always unplanned 🍃✨",
+  "Coolest guys in town! Chilling with my favorite best friends 😎🤙",
+  "The gang's all here! Creating core memories, one step at a time 🚶‍♀️🌟",
+  "Pure comfort and endless laughter. Thank you for being you 🌸💖",
+  "Elegant traditional vibes. Looking absolutely stunning! 🪔👗",
+  "Smiles that can light up the darkest night. Twin energy ✨💫",
+  "Slaying the pose. Confidence looks beautiful on us! 👑🔥",
+  "Big group hug! The support system that makes life so beautiful 🤝❤️",
+  "Sweetest memory. Cherishing this day forever and ever 📸💞",
+  "Mirror reflection selfie! Always capturing the perfect look 🤳💎",
+  "Bright smiles, warm hearts. Duo friendship goals 👭💛",
+  "Blessed temple visits with these beautiful souls 🪔🙏",
+  "Happiness in a frame. You are my sunshine! ☀️🥰",
+  "Outing diaries! Walking through the green pathways with the squad 🌳🚶‍♀️",
+  "Trips, laughter, and endless fun. The crew that travels together 🚗🎒",
+  "Beautiful day out with the best people. Pure serenity 🌿🌤️",
+  "Silly faces at the amusement park! Joyful times with the squad 🎡🤪",
+  "Gopuram views and sacred prayers. Blessed to have this gang 🪔✨",
+  "The best gang ever. Standing tall and proud together! 🏆💪",
+  "Sunset group photo. The sky was beautiful, but our laughs were better 🌅❤️",
+  "Endless happiness and green valleys. Squad hiking memories ⛰️🍃",
+  "Amusement park adventures! Experiencing the thrills with the squad 🎢🤩",
+  "Beautiful memories in the making. The squad that stays together, slays together 🔥🌟",
+  "The grand finale group photo! Cheers to the friendship that never ends 🥂♾️"
+];
+
+const isDuoPhoto = (num: number): boolean => {
+  const groupIndices = new Set([
+    2, 7, 8, 9, 11, 14, 16, 24, 29, 34, 36, 41, 46, 50, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62
+  ]);
+  return !groupIndices.has(num);
+};
+
+const getGroupTagsForIndex = (num: number): string[] => {
+  const isDuo = isDuoPhoto(num);
+  const mainTag = isDuo ? 'Duo' : 'Group';
+  const tags = [mainTag];
+  if (num === 3 || num === 55 || num === 60) tags.push('Wonderla');
+  else if (num === 2 || num === 9 || num === 50 || num === 56) tags.push('Temple');
+  else if (isDuo) {
+    const duoPool = ['Selfie', 'Candid', 'Besties', 'Outing', 'Laughter'];
+    tags.push(duoPool[num % duoPool.length]);
+  } else {
+    const groupPool = ['Squad', 'Outing', 'Memories', 'Adventures', 'Travel'];
+    tags.push(groupPool[num % groupPool.length]);
+  }
+  return tags;
+};
+
+const groupGalleryData = groupImageUrls.map((url, index) => {
+  const num = getGroupNumber(url);
+  const captionIndex = num - 1;
+  return {
+    id: 600 + index,
+    image: url,
+    caption: groupCaptions[captionIndex] || `Group Memory #${num} ✨`,
+    tags: getGroupTagsForIndex(num)
+  };
+});
 
 interface ThreeDCardProps {
   children: React.ReactNode;
@@ -345,6 +601,16 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
   const [friendSearchQuery, setFriendSearchQuery] = useState<string>('');
   const [isFriendExpanded, setIsFriendExpanded] = useState<boolean>(false);
   
+  // Sibling Gallery Expand & Filter States
+  const [selectedSiblingTag, setSelectedSiblingTag] = useState<string>('All');
+  const [siblingSearchQuery, setSiblingSearchQuery] = useState<string>('');
+  const [isSiblingExpanded, setIsSiblingExpanded] = useState<boolean>(false);
+  
+  // Group Gallery Expand & Filter States
+  const [selectedGroupTag, setSelectedGroupTag] = useState<string>('All');
+  const [groupSearchQuery, setGroupSearchQuery] = useState<string>('');
+  const [isGroupExpanded, setIsGroupExpanded] = useState<boolean>(false);
+  
   // Gallery Unlock States (True when all pairs of that category are matched)
   const [unlockedGalleries, setUnlockedGalleries] = useState({
     solo: false,
@@ -352,10 +618,11 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
     gossip: false,
     friend: false,
     sibling: false,
+    group: false,
   });
 
   // Highlight flash animations for newly unlocked galleries
-  const [flashGallery, setFlashGallery] = useState<'solo' | 'heart' | 'gossip' | 'friend' | 'sibling' | null>(null);
+  const [flashGallery, setFlashGallery] = useState<'solo' | 'heart' | 'gossip' | 'friend' | 'sibling' | 'group' | null>(null);
 
   // 2. Initialize Game Cards
   useEffect(() => {
@@ -367,15 +634,18 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
       { pairId: 'gossip-1', category: 'gossip', label: 'Gossip Partner 💬', imagePlaceholder: gossipImageUrls[0] || 'path_to_gossip_1.jpg' },
       { pairId: 'gossip-1', category: 'gossip', label: 'Gossip Partner 💬', imagePlaceholder: gossipImageUrls[0] || 'path_to_gossip_1.jpg' },
 
-      { pairId: 'friend-1', category: 'friend', label: 'Birthday Fun', imagePlaceholder: friendImageUrls[0] || 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80' },
-      { pairId: 'friend-1', category: 'friend', label: 'Birthday Fun', imagePlaceholder: friendImageUrls[0] || 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80' },
-      { pairId: 'friend-2', category: 'friend', label: 'Crazy Squad', imagePlaceholder: friendImageUrls[1] || 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80' },
-      { pairId: 'friend-2', category: 'friend', label: 'Crazy Squad', imagePlaceholder: friendImageUrls[1] || 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80' },
+      { pairId: 'friend-1', category: 'friend', label: 'Best Friends 🤍', imagePlaceholder: friendImageUrls[0] || 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80' },
+      { pairId: 'friend-1', category: 'friend', label: 'Best Friends 🤍', imagePlaceholder: friendImageUrls[0] || 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80' },
+      { pairId: 'friend-2', category: 'friend', label: 'Besties 🌟', imagePlaceholder: friendImageUrls[1] || 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80' },
+      { pairId: 'friend-2', category: 'friend', label: 'Besties 🌟', imagePlaceholder: friendImageUrls[1] || 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80' },
 
-      { pairId: 'sibling-1', category: 'sibling', label: 'Brother & Sister', imagePlaceholder: siblingImageUrls[0] },
-      { pairId: 'sibling-1', category: 'sibling', label: 'Brother & Sister', imagePlaceholder: siblingImageUrls[0] },
-      { pairId: 'sibling-2', category: 'sibling', label: 'Childhood Meme', imagePlaceholder: siblingImageUrls[1] },
-      { pairId: 'sibling-2', category: 'sibling', label: 'Childhood Meme', imagePlaceholder: siblingImageUrls[1] },
+      { pairId: 'sibling-1', category: 'sibling', label: 'Silly Faces 😜', imagePlaceholder: siblingImageUrls[0] },
+      { pairId: 'sibling-1', category: 'sibling', label: 'Silly Faces 😜', imagePlaceholder: siblingImageUrls[0] },
+      { pairId: 'sibling-2', category: 'sibling', label: 'Bond Forever ✨', imagePlaceholder: siblingImageUrls[1] },
+      { pairId: 'sibling-2', category: 'sibling', label: 'Bond Forever ✨', imagePlaceholder: siblingImageUrls[1] },
+
+      { pairId: 'group-1', category: 'group', label: 'Squad Goals 📸', imagePlaceholder: groupImageUrls[0] || 'path_to_group_1.jpg' },
+      { pairId: 'group-1', category: 'group', label: 'Squad Goals 📸', imagePlaceholder: groupImageUrls[0] || 'path_to_group_1.jpg' },
     ];
 
     // Shuffle cards
@@ -440,7 +710,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
   };
 
   // 4. Verify Gallery Unlocks
-  const checkCategoryUnlock = (currentCards: Card[], category: 'solo' | 'heart' | 'gossip' | 'friend' | 'sibling') => {
+  const checkCategoryUnlock = (currentCards: Card[], category: 'solo' | 'heart' | 'gossip' | 'friend' | 'sibling' | 'group') => {
     const categoryCards = currentCards.filter(c => c.category === category);
     const allMatched = categoryCards.every(c => c.isMatched);
 
@@ -457,7 +727,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
         }
 
         // Check if all galleries are now unlocked
-        if (next.solo && next.heart && next.gossip && next.friend && next.sibling) {
+        if (next.solo && next.heart && next.gossip && next.friend && next.sibling && next.group) {
           setTimeout(() => {
             if (window.playUISfx) window.playUISfx('win');
             onAllMatched();
@@ -505,20 +775,6 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
     });
   };
 
-  // 5. Galleries Data
-  // 5. Galleries Data
-  const galleryData = {
-    solo: soloGalleryData,
-    heart: heartGalleryData,
-    gossip: gossipGalleryData,
-    friend: friendGalleryData,
-    sibling: [
-      { id: 301, image: siblingImageUrls[0], caption: 'Siblings by Chance, Friends by Choice 🤍', tags: ['Us', 'Bro & Sis'] },
-      { id: 302, image: siblingImageUrls[1], caption: 'Childhood Chaos 👶👧', tags: ['Retro', 'Nostalgia'] },
-      { id: 303, image: siblingImageUrls[2], caption: 'Endless Banter 🥊', tags: ['Fights', 'Fun'] },
-      { id: 304, image: siblingImageUrls[3], caption: 'Got Your Back Always 🛡️', tags: ['Promise', 'Family'] },
-    ],
-  };
 
   const filteredSoloGallery = soloGalleryData.filter(item => {
     const matchesTag = selectedTag === 'All' || item.tags.includes(selectedTag);
@@ -548,6 +804,20 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
     return matchesTag && matchesSearch;
   });
 
+  const filteredSiblingGallery = siblingGalleryData.filter(item => {
+    const matchesTag = selectedSiblingTag === 'All' || item.tags.includes(selectedSiblingTag);
+    const matchesSearch = item.caption.toLowerCase().includes(siblingSearchQuery.toLowerCase()) || 
+                          item.tags.some(t => t.toLowerCase().includes(siblingSearchQuery.toLowerCase()));
+    return matchesTag && matchesSearch;
+  });
+
+  const filteredGroupGallery = groupGalleryData.filter(item => {
+    const matchesTag = selectedGroupTag === 'All' || item.tags.includes(selectedGroupTag);
+    const matchesSearch = item.caption.toLowerCase().includes(groupSearchQuery.toLowerCase()) || 
+                          item.tags.some(t => t.toLowerCase().includes(groupSearchQuery.toLowerCase()));
+    return matchesTag && matchesSearch;
+  });
+
   return (
     <div className="relative z-10 w-full max-w-6xl mx-auto px-4 py-16 flex flex-col items-center">
       
@@ -568,7 +838,9 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
                 ? 'from-teal-500/40 to-transparent'
                 : flashGallery === 'friend'
                 ? 'from-amber-300/40 to-transparent'
-                : 'from-biolum-purple/40 to-transparent'
+                : flashGallery === 'sibling'
+                ? 'from-biolum-purple/40 to-transparent'
+                : 'from-purple-500/40 to-transparent'
             }`}
           />
         )}
@@ -603,17 +875,21 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
           </div>
           <div className="flex items-center gap-2">
             <span className={`w-2.5 h-2.5 rounded-full ${unlockedGalleries.friend ? 'bg-amber-300 shadow-[0_0_8px_#fcd34d]' : 'bg-zinc-800'}`} />
-            Friends Chapter
+            Best Friends Chapter
           </div>
           <div className="flex items-center gap-2">
             <span className={`w-2.5 h-2.5 rounded-full ${unlockedGalleries.sibling ? 'bg-biolum-purple shadow-[0_0_8px_#bd00ff]' : 'bg-zinc-800'}`} />
             Sibling Chapter
           </div>
+          <div className="flex items-center gap-2">
+            <span className={`w-2.5 h-2.5 rounded-full ${unlockedGalleries.group ? 'bg-purple-500 shadow-[0_0_8px_#a855f7]' : 'bg-zinc-800'}`} />
+            Squad & Duos Chapter
+          </div>
         </div>
       </motion.div>
 
       {/* GAME GRID */}
-      <div className="grid grid-cols-3 sm:grid-cols-7 gap-4 md:gap-6 max-w-5xl w-full mb-20">
+      <div className="grid grid-cols-4 sm:grid-cols-8 gap-4 md:gap-6 max-w-5xl w-full mb-20">
         {cards.map((card, idx) => (
           <div
             key={card.id}
@@ -625,7 +901,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
               style={{ transformStyle: 'preserve-3d' }}
               animate={{ rotateY: card.isFlipped || card.isMatched ? 180 : 0 }}
               whileHover={{ scale: 1.03, y: -4 }}
-              transition={{ type: 'spring', damping: 15, stiffness: 350 }}
+              transition={{ type: 'spring', damping: 22, stiffness: 480, mass: 0.6 }}
             >
               {/* CARD BACK (Luxurious Gold Geometric Pattern) */}
               <div 
@@ -649,7 +925,9 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
                     ? 'border-teal-500/30 shadow-[inset_0_0_12px_rgba(45,212,191,0.05)]' 
                     : card.category === 'friend' 
                     ? 'border-amber-300/30 shadow-[inset_0_0_12px_rgba(252,211,77,0.05)]' 
-                    : 'border-biolum-purple/30 shadow-[inset_0_0_12px_rgba(189,0,255,0.05)]'
+                    : card.category === 'sibling'
+                    ? 'border-biolum-purple/30 shadow-[inset_0_0_12px_rgba(189,0,255,0.05)]'
+                    : 'border-purple-500/30 shadow-[inset_0_0_12px_rgba(168,85,247,0.05)]'
                 }`}
                 style={{ transform: 'rotateY(180deg)' }}
               >
@@ -675,7 +953,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
                       
                       {/* Glowing decorative indicator */}
                       <span className={`w-8 h-8 rounded-full border border-white/10 flex items-center justify-center my-3 ${
-                        card.category === 'solo' ? 'text-biolum-pink' : card.category === 'heart' ? 'text-red-500' : card.category === 'gossip' ? 'text-teal-400' : card.category === 'friend' ? 'text-amber-300' : 'text-biolum-purple'
+                        card.category === 'solo' ? 'text-biolum-pink' : card.category === 'heart' ? 'text-red-500' : card.category === 'gossip' ? 'text-teal-400' : card.category === 'friend' ? 'text-amber-300' : card.category === 'sibling' ? 'text-biolum-purple' : 'text-purple-400'
                       }`}>
                         <Trophy size={14} className="opacity-75" />
                       </span>
@@ -693,7 +971,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
                       className="absolute inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-10"
                     >
                       <span className={`px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase tracking-wider ${
-                        card.category === 'solo' ? 'border-biolum-pink/40 text-biolum-pink bg-biolum-pink/10' : card.category === 'heart' ? 'border-red-500/40 text-red-500 bg-red-500/10' : card.category === 'gossip' ? 'border-teal-400/40 text-teal-400 bg-teal-400/10' : card.category === 'friend' ? 'border-amber-300/40 text-amber-300 bg-amber-300/10' : 'border-biolum-purple/40 text-biolum-purple bg-biolum-purple/10'
+                        card.category === 'solo' ? 'border-biolum-pink/40 text-biolum-pink bg-biolum-pink/10' : card.category === 'heart' ? 'border-red-500/40 text-red-500 bg-red-500/10' : card.category === 'gossip' ? 'border-teal-400/40 text-teal-400 bg-teal-400/10' : card.category === 'friend' ? 'border-amber-300/40 text-amber-300 bg-amber-300/10' : card.category === 'sibling' ? 'border-biolum-purple/40 text-biolum-purple bg-biolum-purple/10' : 'border-purple-500/40 text-purple-400 bg-purple-500/10'
                       }`}>
                         Matched
                       </span>
@@ -709,7 +987,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
         Memory Chapters 📖
       </h3>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 w-full max-w-6xl mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl mb-12">
         
         {/* CHAPTER 1: SOLO GALLERY */}
         <div className="relative">
@@ -783,7 +1061,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
               }}
               className="mt-4 w-full py-2 rounded-xl border border-biolum-pink/30 bg-biolum-pink/5 text-biolum-pink hover:bg-biolum-pink/15 hover:border-biolum-pink/50 duration-300 text-xs font-mono uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer transition-all"
             >
-              {isSoloExpanded ? 'Collapse Gallery' : 'Explore All 62 Pics ↗'}
+              {isSoloExpanded ? 'Collapse Gallery' : `Explore All ${soloGalleryData.length} Pics ↗`}
             </button>
           </div>
         </div>
@@ -858,7 +1136,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
               }}
               className="mt-4 w-full py-2 rounded-xl border border-red-500/30 bg-red-500/5 text-red-500 hover:bg-red-500/15 hover:border-red-500/50 duration-300 text-xs font-mono uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer transition-all"
             >
-              {isHeartExpanded ? 'Collapse Gallery' : 'Explore All 62 Pics ↗'}
+              {isHeartExpanded ? 'Collapse Gallery' : `Explore All ${heartGalleryData.length} Pics ↗`}
             </button>
           </div>
         </div>
@@ -933,7 +1211,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
               }}
               className="mt-4 w-full py-2 rounded-xl border border-teal-500/30 bg-teal-500/5 text-teal-400 hover:bg-teal-500/15 hover:border-teal-500/50 duration-300 text-xs font-mono uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer transition-all"
             >
-              {isGossipExpanded ? 'Collapse Gallery' : 'Explore All 21 Pics ↗'}
+              {isGossipExpanded ? 'Collapse Gallery' : `Explore All ${gossipGalleryData.length} Pics ↗`}
             </button>
           </div>
         </div>
@@ -950,9 +1228,9 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
                 <div className="w-12 h-12 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center text-amber-300 mb-4">
                   <Lock size={20} />
                 </div>
-                <h4 className="font-serif text-xl font-bold text-white mb-1">Squad & Friends</h4>
+                <h4 className="font-serif text-xl font-bold text-white mb-1">Best Friends</h4>
                 <p className="text-zinc-500 font-sans text-xs max-w-[200px]">
-                  Match the **Friend Cards** to unlock this chapter.
+                  Match the **Best Friend Cards** to unlock this chapter.
                 </p>
               </motion.div>
             )}
@@ -963,7 +1241,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
             <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
               <h4 className="font-serif text-xl font-bold text-white flex items-center gap-2">
                 <span className="text-amber-300 font-mono text-sm">[04]</span>
-                Squad & Friends
+                Best Friends
               </h4>
               <span className="text-[10px] bg-amber-300/15 text-amber-300 border border-amber-300/20 px-2 py-0.5 rounded-full font-mono flex items-center gap-1 uppercase tracking-wider">
                 <Unlock size={8} /> Unlocked
@@ -1008,12 +1286,12 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
               }}
               className="mt-4 w-full py-2 rounded-xl border border-amber-300/30 bg-amber-300/5 text-amber-300 hover:bg-amber-300/15 hover:border-amber-300/50 duration-300 text-xs font-mono uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer transition-all"
             >
-              {isFriendExpanded ? 'Collapse Gallery' : 'Explore All 22 Pics ↗'}
+              {isFriendExpanded ? 'Collapse Gallery' : `Explore All ${friendGalleryData.length} Pics ↗`}
             </button>
           </div>
         </div>
 
-        {/* CHAPTER 5: OUR MEMORIES */}
+        {/* CHAPTER 5: BROTHER & SISTER */}
         <div className="relative">
           <AnimatePresence>
             {!unlockedGalleries.sibling && (
@@ -1025,7 +1303,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
                 <div className="w-12 h-12 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center text-biolum-purple mb-4">
                   <Lock size={20} />
                 </div>
-                <h4 className="font-serif text-xl font-bold text-white mb-1">Our Memories</h4>
+                <h4 className="font-serif text-xl font-bold text-white mb-1">Brother & Sister</h4>
                 <p className="text-zinc-500 font-sans text-xs max-w-[200px]">
                   Match the **Sibling Cards** to unlock this chapter.
                 </p>
@@ -1038,20 +1316,20 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
             <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
               <h4 className="font-serif text-xl font-bold text-white flex items-center gap-2">
                 <span className="text-biolum-purple font-mono text-sm">[05]</span>
-                Our Memories
+                Brother & Sister
               </h4>
               <span className="text-[10px] bg-biolum-purple/15 text-biolum-purple border border-biolum-purple/20 px-2 py-0.5 rounded-full font-mono flex items-center gap-1 uppercase tracking-wider">
                 <Unlock size={8} /> Unlocked
               </span>
             </div>
 
-            {/* Photo List */}
+            {/* Photo List Preview of First 4 */}
             <div className="grid grid-cols-2 gap-3 flex-grow">
-              {galleryData.sibling.map((item, index) => (
-                <ThreeDCard
+              {siblingGalleryData.slice(0, 4).map((item, index) => (
+                <div
                   key={item.id}
-                  onClick={() => openLightbox(siblingImageUrls, index, galleryData.sibling.map(d => d.caption))}
-                  className="group relative aspect-square rounded-xl bg-zinc-900/60 overflow-hidden border border-white/10"
+                  onClick={() => openLightbox(siblingImageUrls, index, siblingGalleryData.map(d => d.caption))}
+                  className="group relative aspect-square rounded-xl bg-zinc-900/60 overflow-hidden cursor-pointer border border-white/10 preserve-3d"
                 >
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 z-10 duration-300 group-hover:opacity-90" />
                   
@@ -1066,9 +1344,100 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
                     <span className="text-[10px] text-zinc-300 font-medium line-clamp-1">{item.caption}</span>
                     <Eye size={12} className="text-biolum-purple opacity-0 group-hover:opacity-100 duration-300" />
                   </div>
-                </ThreeDCard>
+                </div>
               ))}
             </div>
+
+            {/* View All Button */}
+            <button
+              onClick={() => {
+                if (window.playUISfx) window.playUISfx('click');
+                setIsSiblingExpanded(!isSiblingExpanded);
+                if (!isSiblingExpanded) {
+                  setTimeout(() => {
+                    document.getElementById('sibling-expanded-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 300);
+                }
+              }}
+              className="mt-4 w-full py-2 rounded-xl border border-biolum-purple/30 bg-biolum-purple/5 text-biolum-purple hover:bg-biolum-purple/15 hover:border-biolum-purple/50 duration-300 text-xs font-mono uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer transition-all"
+            >
+              {isSiblingExpanded ? 'Collapse Scrapbook' : 'Open 3D Scrapbook ↗'}
+            </button>
+          </div>
+        </div>
+
+        {/* CHAPTER 6: SQUAD & DUOS GALLERY */}
+        <div className="relative">
+          <AnimatePresence>
+            {!unlockedGalleries.group && (
+              <motion.div
+                initial={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-20 rounded-3xl glass-panel border border-white/10 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center select-none"
+              >
+                <div className="w-12 h-12 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center text-purple-400 mb-4">
+                  <Lock size={20} />
+                </div>
+                <h4 className="font-serif text-xl font-bold text-white mb-1">Squad & Duos</h4>
+                <p className="text-zinc-500 font-sans text-xs max-w-[200px]">
+                  Match the **Squad Cards** to unlock this chapter.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Unlocked Content */}
+          <div className="rounded-3xl glass-panel p-6 border border-purple-500/20 hover:border-purple-500/40 bg-zinc-950/20 duration-300 flex flex-col h-full">
+            <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+              <h4 className="font-serif text-xl font-bold text-white flex items-center gap-2">
+                <span className="text-purple-400 font-mono text-sm">[06]</span>
+                Squad & Duos
+              </h4>
+              <span className="text-[10px] bg-purple-500/15 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded-full font-mono flex items-center gap-1 uppercase tracking-wider">
+                <Unlock size={8} /> Unlocked
+              </span>
+            </div>
+
+            {/* Photo List Preview of First 4 */}
+            <div className="grid grid-cols-2 gap-3 flex-grow">
+              {groupGalleryData.slice(0, 4).map((item, index) => (
+                <div
+                  key={item.id}
+                  onClick={() => openLightbox(groupImageUrls, index, groupGalleryData.map(d => d.caption))}
+                  className="group relative aspect-square rounded-xl bg-zinc-900/60 overflow-hidden cursor-pointer border border-white/10 preserve-3d"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 z-10 duration-300 group-hover:opacity-90" />
+                  
+                  <img 
+                    src={item.image} 
+                    alt={item.caption} 
+                    loading="lazy"
+                    className="w-full h-full object-cover group-hover:scale-105 duration-500 select-none" 
+                  />
+
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5 z-15 transform translate-z-10 group-hover:translate-y-0 duration-300 flex items-center justify-between">
+                    <span className="text-[10px] text-zinc-300 font-medium line-clamp-1">{item.caption}</span>
+                    <Eye size={12} className="text-purple-400 opacity-0 group-hover:opacity-100 duration-300" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* View All Button */}
+            <button
+              onClick={() => {
+                if (window.playUISfx) window.playUISfx('click');
+                setIsGroupExpanded(!isGroupExpanded);
+                if (!isGroupExpanded) {
+                  setTimeout(() => {
+                    document.getElementById('group-expanded-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 300);
+                }
+              }}
+              className="mt-4 w-full py-2 rounded-xl border border-purple-500/30 bg-purple-500/5 text-purple-400 hover:bg-purple-500/15 hover:border-purple-500/50 duration-300 text-xs font-mono uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer transition-all"
+            >
+              {isGroupExpanded ? 'Collapse Gallery' : `Explore All ${groupGalleryData.length} Pics ↗`}
+            </button>
           </div>
         </div>
 
@@ -1396,10 +1765,10 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
             >
               <div className="text-center mb-8">
                 <h4 className="font-serif text-3xl font-extrabold text-white mb-2 glow-gold">
-                  Squad & Friends Collection
+                  Best Friends Collection
                 </h4>
                 <p className="text-zinc-400 font-sans text-sm max-w-md mx-auto">
-                  Browse, search, and filter through the complete archive of {friendGalleryData.length} beautiful squad memories.
+                  Browse, search, and filter through the complete archive of {friendGalleryData.length} beautiful best friends memories.
                 </p>
               </div>
 
@@ -1443,7 +1812,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
               {/* Expanded Grid */}
               {filteredFriendGallery.length === 0 ? (
                 <div className="text-center py-16 text-zinc-500 text-sm font-mono border border-dashed border-white/5 rounded-3xl max-w-3xl mx-auto">
-                  No squad photo matches the query "{friendSearchQuery || selectedFriendTag}"
+                  No best friends photo matches the query "{friendSearchQuery || selectedFriendTag}"
                 </div>
               ) : (
                 <motion.div 
@@ -1475,6 +1844,261 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({ onAllMatched }) => {
                             <span className="text-[10px] text-white font-medium line-clamp-1 block leading-tight">{item.caption}</span>
                           </div>
                           <Eye size={12} className="text-amber-300 opacity-0 group-hover:opacity-100 duration-300 shrink-0 ml-1 mb-0.5" />
+                        </div>
+                      </ThreeDCard>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Expanded Sibling Gallery Section - Renders Full Width Below the Cards */}
+      <div id="sibling-expanded-section" className="w-full">
+        <AnimatePresence>
+          {unlockedGalleries.sibling && isSiblingExpanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.6, ease: 'easeInOut' }}
+              className="w-full border-t border-white/10 pt-12 pb-16 overflow-hidden"
+            >
+              <div className="text-center mb-8">
+                <h4 className="font-serif text-3xl font-extrabold text-white mb-2 glow-purple text-biolum-purple">
+                  Brother & Sister Scrapbook 📖✨
+                </h4>
+                <p className="text-zinc-400 font-sans text-sm max-w-md mx-auto">
+                  A unique interactive scrapbook created for the best sister. Every memory here is precious!
+                </p>
+              </div>
+
+              {/* Heartfelt Handwritten Note Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="max-w-2xl mx-auto mb-16 p-8 rounded-3xl border border-dashed border-biolum-purple/40 bg-zinc-950/80 shadow-[0_0_30px_rgba(189,0,255,0.05)] relative overflow-hidden"
+              >
+                {/* Decorative background details */}
+                <div className="absolute top-0 right-0 w-24 h-24 bg-biolum-purple/10 rounded-full blur-2xl pointer-events-none" />
+                <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-biolum-purple/5 rounded-full blur-3xl pointer-events-none" />
+                
+                {/* Torn notebook paper edge aesthetic top & bottom line */}
+                <div className="absolute top-3 left-4 right-4 flex justify-between gap-1 opacity-20 pointer-events-none select-none">
+                  {[...Array(24)].map((_, i) => (
+                    <div key={i} className="w-2.5 h-2.5 rounded-full bg-biolum-purple" />
+                  ))}
+                </div>
+
+                <div className="mt-4 font-sans text-zinc-100 leading-relaxed text-sm md:text-base space-y-4 pr-2 pl-2 border-l-2 border-biolum-purple/20">
+                  <p className="font-serif text-lg md:text-xl font-bold text-biolum-purple italic">To My Dearest Sister,</p>
+                  <p className="font-serif italic text-zinc-200">
+                    "Looking through our photos, I realized we might not have hundreds of selfies together. But every single picture we do have is filled with so much genuine laughter, crazy teasing, and pure love."
+                  </p>
+                  <p className="font-serif italic text-zinc-200">
+                    "You are not just my sister; you are my constant, my confidante, and my favorite partner-in-crime. No matter how big we grow or how far we go, remember that your brother is always just one call away, standing right behind you to protect you and cheer you on."
+                  </p>
+                  <p className="font-serif italic text-zinc-200">
+                    "Thank you for bringing so much color and joy into my life. Happy Birthday, my sweet sister! 💖"
+                  </p>
+                  <p className="text-right font-serif text-lg font-bold text-biolum-purple italic pr-4">- Your Brother</p>
+                </div>
+              </motion.div>
+
+              {/* Search and Filters */}
+              <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-12 max-w-5xl mx-auto w-full px-4">
+                {/* Filter Pills */}
+                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                  {['All', 'Silly Us', 'Celebrations', 'Selfie', 'Candid', 'Cafe Date', 'Sunset', 'Blessed'].map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => {
+                        if (window.playUISfx) window.playUISfx('click');
+                        setSelectedSiblingTag(tag);
+                      }}
+                      className={`px-4 py-2 rounded-full text-xs font-semibold border duration-300 cursor-pointer transition-all ${
+                        selectedSiblingTag === tag
+                          ? 'bg-biolum-purple border-biolum-purple text-white shadow-[0_0_15px_#bd00ff] scale-105'
+                          : 'bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:border-biolum-purple/40'
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Search Field */}
+                <div className="relative w-full md:w-72">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none">
+                    <Search size={14} />
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Search memories..."
+                    value={siblingSearchQuery}
+                    onChange={(e) => setSiblingSearchQuery(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-biolum-purple/50 focus:ring-1 focus:ring-biolum-purple/50 transition-all font-sans"
+                  />
+                </div>
+              </div>
+
+              {/* Scrapbook Polaroid Collage Layout */}
+              {filteredSiblingGallery.length === 0 ? (
+                <div className="text-center py-16 text-zinc-500 text-sm font-mono border border-dashed border-white/5 rounded-3xl max-w-3xl mx-auto">
+                  No scrapbook memory matches "{siblingSearchQuery || selectedSiblingTag}"
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 max-w-6xl mx-auto w-full px-4">
+                  {filteredSiblingGallery.map((item, idx) => {
+                    const originalIndex = siblingGalleryData.findIndex(x => x.id === item.id);
+                    // Generate pseudo-random tilts for Polaroid scrapbook style
+                    const rotations = ['rotate-1', 'rotate--1', 'rotate-2', 'rotate--2', 'rotate-3', 'rotate--3'];
+                    const tiltClass = rotations[(item.id) % rotations.length];
+                    
+                    return (
+                      <ThreeDCard
+                        key={item.id}
+                        onClick={() => openLightbox(siblingImageUrls, originalIndex, siblingGalleryData.map(d => d.caption))}
+                        className={`group relative bg-white p-3 pb-8 rounded-sm shadow-xl hover:shadow-2xl hover:scale-105 duration-350 cursor-pointer ${tiltClass} transition-transform border border-zinc-200 max-w-[240px] mx-auto w-full`}
+                      >
+                        {/* Polaroid Push Pin / Tape Accent */}
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 pointer-events-none select-none">
+                          {idx % 2 === 0 ? (
+                            // Push Pin
+                            <div className="w-4 h-4 rounded-full bg-red-500 shadow-md relative">
+                              <div className="absolute top-1 left-1.5 w-1 h-3 bg-zinc-400 rotate-12" />
+                            </div>
+                          ) : (
+                            // Washi Tape
+                            <div className="w-12 h-4 bg-yellow-100/50 backdrop-blur-xs border border-yellow-200/40 rotate-[-5deg] opacity-75 shadow-xs" />
+                          )}
+                        </div>
+
+                        {/* Image Container */}
+                        <div className="w-full aspect-square bg-zinc-100 overflow-hidden relative border border-zinc-200/60">
+                          <img
+                            src={item.image}
+                            alt={item.caption}
+                            loading="lazy"
+                            className="w-full h-full object-cover group-hover:scale-105 duration-500 select-none filter sepia-[0.1] contrast-[1.05]"
+                          />
+                          <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-10 duration-300" />
+                        </div>
+
+                        {/* Handwritten Caption Area */}
+                        <div className="mt-4 text-center">
+                          <p className="font-serif text-[13px] text-zinc-800 leading-tight font-semibold line-clamp-2 px-1 select-text">
+                            {item.caption}
+                          </p>
+                          <span className="mt-2 inline-block text-[9px] font-mono text-zinc-400 uppercase tracking-widest">
+                            {item.tags.join(' • ')}
+                          </span>
+                        </div>
+                      </ThreeDCard>
+                    );
+                  })}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Expanded Group Gallery Section - Renders Full Width Below the Cards */}
+      <div id="group-expanded-section" className="w-full">
+        <AnimatePresence>
+          {unlockedGalleries.group && isGroupExpanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
+              className="w-full border-t border-white/10 pt-12 pb-16 overflow-hidden"
+            >
+              <div className="text-center mb-8">
+                <h4 className="font-serif text-3xl font-extrabold text-white mb-2 glow-purple text-purple-400">
+                  Squad & Duo Collection 📸
+                </h4>
+                <p className="text-zinc-400 font-sans text-sm max-w-md mx-auto">
+                  Browse, search, and filter through the complete archive of {groupGalleryData.length} fantastic group hangouts and cozy duo pictures.
+                </p>
+              </div>
+
+              {/* Search and Filters */}
+              <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-8 max-w-5xl mx-auto w-full">
+                {/* Filter Pills */}
+                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                  {['All', 'Group', 'Duo', 'Temple', 'Wonderla', 'Selfie', 'Outing', 'Squad', 'Besties'].map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => {
+                        if (window.playUISfx) window.playUISfx('click');
+                        setSelectedGroupTag(tag);
+                      }}
+                      className={`px-4 py-2 rounded-full text-xs font-semibold border duration-300 cursor-pointer transition-all ${
+                        selectedGroupTag === tag
+                          ? 'bg-purple-500 border-purple-500 text-white shadow-[0_0_15px_#a855f7] scale-105'
+                          : 'bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:border-purple-500/40'
+                      }`}
+                    >
+                      {tag === 'Group' ? 'Group Photos' : tag === 'Duo' ? 'Duo Photos' : tag}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Search Field */}
+                <div className="relative w-full md:w-72">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none">
+                    <Search size={14} />
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Search captions or tags..."
+                    value={groupSearchQuery}
+                    onChange={(e) => setGroupSearchQuery(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all font-sans"
+                  />
+                </div>
+              </div>
+
+              {/* Expanded Grid */}
+              {filteredGroupGallery.length === 0 ? (
+                <div className="text-center py-16 text-zinc-500 text-sm font-mono border border-dashed border-white/5 rounded-3xl max-w-3xl mx-auto">
+                  No memory matches the query "{groupSearchQuery || selectedGroupTag}"
+                </div>
+              ) : (
+                <motion.div 
+                  layout
+                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 max-w-6xl mx-auto w-full"
+                >
+                  {filteredGroupGallery.map((item) => {
+                    const originalIndex = groupGalleryData.findIndex(x => x.id === item.id);
+                    return (
+                      <ThreeDCard
+                        key={item.id}
+                        onClick={() => openLightbox(groupImageUrls, originalIndex, groupGalleryData.map(d => d.caption))}
+                        className="group relative aspect-[3/4] rounded-2xl bg-zinc-900/60 overflow-hidden border border-white/10 shadow-lg"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-60 z-10 duration-300 group-hover:opacity-90" />
+                        
+                        <img 
+                          src={item.image} 
+                          alt={item.caption} 
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 duration-500 select-none" 
+                        />
+
+                        <div className="absolute bottom-3 left-3 right-3 z-15 transform translate-z-10 group-hover:translate-y-0 duration-300 flex items-end justify-between">
+                          <div className="min-w-0 pr-2">
+                            <span className="text-[8px] text-purple-400 font-mono uppercase tracking-wider block mb-0.5">
+                              {item.tags.join(' • ')}
+                            </span>
+                            <span className="text-[10px] text-white font-medium line-clamp-1 block leading-tight">{item.caption}</span>
+                          </div>
+                          <Eye size={12} className="text-purple-400 opacity-0 group-hover:opacity-100 duration-300 shrink-0 ml-1 mb-0.5" />
                         </div>
                       </ThreeDCard>
                     );

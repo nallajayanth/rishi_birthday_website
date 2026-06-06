@@ -1,7 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { SparkleEvasion } from './SparkleEvasion';
 
-export const FinalPromise: React.FC = () => {
+interface FinalPromiseProps {
+  onNextSurprise: () => void;
+}
+
+export const FinalPromise: React.FC<FinalPromiseProps> = ({ onNextSurprise }) => {
+  const [showSparkle, setShowSparkle] = useState(false);
+
+  useEffect(() => {
+    // 10.5 seconds aligns with the completion of the staggered text animations
+    const timer = setTimeout(() => {
+      setShowSparkle(true);
+    }, 10500);
+    return () => clearTimeout(timer);
+  }, []);
   const sentences = [
     "Through every high and every low, remember that you never walk alone.",
     "Your brother will always be right beside you, shielding you, cheering for you, until his very last breath.",
@@ -135,6 +149,7 @@ export const FinalPromise: React.FC = () => {
         </motion.div>
 
       </div>
+      {showSparkle && <SparkleEvasion onProceed={onNextSurprise} />}
     </div>
   );
 };
