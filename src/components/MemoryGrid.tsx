@@ -272,20 +272,80 @@ const heartCaptions = [
   "Brightening My World 🌟", "Inside Jokes & Endless Banter 💬", "My Ultimate Supporter 📣", "A Bond That Never Fades 🍃",
   "Making Memories with You 🗺️", "Two of a Kind 🃏", "Love You to the Moon & Back 🌙", "Simply the Best 🥇",
   "Heartwarming Moments 🥰", "Golden Memories 🌟", "My Heart, My Bestie 💖", "True Sisterhood 👭",
-  "Sparkling Friendship ✨", "Forever Bonded ♾️"
+  "Sparkling Friendship ✨", "Forever Bonded ♾️",
+  "You are the sparkle in my everyday life ✨💖",
+  "Two hearts, one unbreakable connection ♾️🤍"
 ];
 
 const getHeartTagsForIndex = (index: number) => {
-  const tagPools = [
-    ['My Heart', 'Bestie'],
-    ['Candid', 'Love'],
-    ['Sisters', 'Bond'],
-    ['Cute', 'Vibe'],
-    ['Squad', 'Goals'],
-    ['Happy', 'Joy'],
-    ['Glow', 'Slay']
-  ];
-  return tagPools[index % tagPools.length];
+  const customTags: { [key: number]: string[] } = {
+    0: ['My Heart', 'Bestie'],     // heart_1
+    1: ['Candid', 'Love'],         // heart_2
+    2: ['Sisters', 'Bond'],        // heart_3
+    3: ['Cute', 'Vibe'],           // heart_4
+    4: ['Squad', 'Goals'],         // heart_5
+    5: ['Happy', 'Joy'],           // heart_6
+    6: ['Glow', 'Slay'],           // heart_7
+    7: ['Mirror Selfie', 'Vibe'],  // heart_8
+    8: ['Selfie', 'Smile'],        // heart_9
+    9: ['Outing', 'Fun'],          // heart_10
+    10: ['Laughter', 'Besties'],   // heart_11
+    11: ['Adventures', 'Travel'],  // heart_12
+    12: ['Blessed', 'Temple'],     // heart_13
+    13: ['Cafe Date', 'Food'],     // heart_14
+    14: ['Silly Us', 'Fun'],       // heart_15
+    15: ['Lovely', 'Glow'],        // heart_16
+    16: ['Always', 'Together'],    // heart_17
+    17: ['Sunsets', 'Outing'],     // heart_18
+    18: ['Gossip', 'Chit-Chat'],   // heart_19
+    19: ['Twin Energy', 'Bond'],   // heart_20
+    20: ['Slaying', 'Elegant'],    // heart_21
+    21: ['Pure Joy', 'Laughter'],  // heart_22
+    22: ['Sweetest', 'Memories'],  // heart_23
+    23: ['Bestie Goals', 'Love'],  // heart_24
+    24: ['Cozy Vibes', 'Happy'],   // heart_25
+    25: ['Outing Diaries', 'Vibe'],// heart_26
+    26: ['Traditional', 'Grace'],  // heart_27
+    27: ['Blessed', 'Prayers'],    // heart_28
+    28: ['Wonderla', 'Thrills'],   // heart_29
+    29: ['Fairground', 'Joy'],     // heart_30
+    30: ['Night Walks', 'Cozy'],   // heart_31
+    31: ['Campus Days', 'Smiles'], // heart_32
+    32: ['Lehenga Look', 'Slay'],  // heart_33
+    33: ['Rooftop', 'Windy'],      // heart_34
+    34: ['Starry Night', 'Vibe'],  // heart_35
+    35: ['Ukulele', 'Music'],      // heart_36
+    36: ['Traditional', 'Glow'],   // heart_37
+    37: ['Selfie', 'Slay'],        // heart_38
+    38: ['Candid', 'Smile'],       // heart_39
+    39: ['Elegant', 'Glow'],       // heart_40
+    40: ['Silly Faces', 'Fun'],    // heart_41
+    41: ['Best Friends', 'Love'],  // heart_42
+    42: ['Mirror Selfie', 'Vibe'],  // heart_43
+    43: ['Outing', 'Adventures'],  // heart_44
+    44: ['Laughter', 'Loud'],      // heart_45
+    45: ['Cozy Talk', 'Coffee'],   // heart_46
+    46: ['Forever Bond', 'Heart'], // heart_47
+    47: ['Charming', 'Style'],     // heart_48
+    48: ['Pure Happiness', 'Joy'], // heart_49
+    49: ['Glow-up', 'Slay'],       // heart_50
+    50: ['Blessed gopuram', '🪔'], // heart_51
+    51: ['Selfie Sparkle', '✨'],  // heart_52
+    52: ['Wonderla Splash', '🌊'], // heart_53
+    53: ['Double Trouble', '😈'],  // heart_54
+    54: ['Golden Hour', '☀️'],     // heart_55
+    55: ['Twin Souls', '🤍'],      // heart_56
+    56: ['Outing Day', '🎒'],      // heart_57
+    57: ['Joyful frame', '🎉'],    // heart_58
+    58: ['Elegant grace', '🌸'],   // heart_59
+    59: ['Infinite Love', '♾️'],   // heart_60
+    60: ['Chasing Sunsets', '🌅'], // heart_61
+    61: ['True Sisterhood', '👭'],  // heart_62
+    62: ['Sparkle', 'Love'],       // heart_63
+    63: ['Connection', 'Bond']     // heart_64
+  };
+
+  return customTags[index] || ['My Heart', 'Bestie'];
 };
 
 const heartGalleryData = heartImageUrls.map((url, index) => {
