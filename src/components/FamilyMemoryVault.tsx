@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Unlock, ArrowLeft, ArrowRight, Heart, Star, Sparkles, Home, User, Play, Pause, X, Camera } from 'lucide-react';
+import { Lock, Unlock, ArrowLeft, ArrowRight, Heart, Star, Sparkles, Home, User, Play, Pause, X } from 'lucide-react';
 
 interface FamilyCard {
   id: number;
@@ -22,10 +22,36 @@ interface Chapter {
 
 interface FamilyMemoryVaultProps {
   onBack: () => void;
+  persistCards: FamilyCard[];
+  setPersistCards: React.Dispatch<React.SetStateAction<FamilyCard[]>>;
+  persistMatches: number;
+  setPersistMatches: React.Dispatch<React.SetStateAction<number>>;
+  persistShowChapters: boolean;
+  setPersistShowChapters: React.Dispatch<React.SetStateAction<boolean>>;
+  persistSecretUnlocked: boolean;
+  setPersistSecretUnlocked: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // 1. Dynamically import all family photos inside src/assets/family
 const familyImagesGlob = import.meta.glob('../assets/family/family_*.{jpeg,jpg,png}', { eager: true });
+
+// Dynamically import all my_heart images inside src/assets/my_heart
+const heartImagesGlob = import.meta.glob('../assets/my_heart/heart_*.jpeg', { eager: true });
+
+const getHeartNumber = (filename: string): number => {
+  const match = filename.match(/heart_(\d+)\.jpeg$/i);
+  if (match) return parseInt(match[1], 10);
+  
+  const prodMatch = filename.match(/heart_(\d+)-[\w\d]+\.jpeg$/i);
+  return prodMatch ? parseInt(prodMatch[1], 10) : 999;
+};
+
+const heartImageUrls = Object.keys(heartImagesGlob)
+  .sort((a, b) => getHeartNumber(a) - getHeartNumber(b))
+  .map((key) => {
+    const module = heartImagesGlob[key] as any;
+    return module.default || module;
+  });
 
 const getFamilyNumber = (filename: string): number => {
   const match = filename.match(/family_(\d+)\.(jpeg|jpg|png)$/i);
@@ -33,6 +59,92 @@ const getFamilyNumber = (filename: string): number => {
   
   const prodMatch = filename.match(/family_(\d+)-[\w\d]+\.(jpeg|jpg|png)$/i);
   return prodMatch ? parseInt(prodMatch[1], 10) : 999;
+};
+
+interface PhotoMetadata {
+  relation: string;
+  caption: string;
+  tags: string[];
+}
+
+const getFamilyPhotoMetadata = (index: number): PhotoMetadata => {
+  const fileNum = index + 1;
+  switch (fileNum) {
+    case 1:
+      return { relation: "Brother & Sister 🛡️", caption: "Sibling protective bond & shared laughter", tags: ["Brother", "Rishi", "Childhood"] };
+    case 2:
+      return { relation: "Mom's Love 👩‍🍼", caption: "A mother's warm hug and infinite blessing", tags: ["Mom", "Love", "Home"] };
+    case 3:
+      return { relation: "Brother's Support 🛡️", caption: "Always standing strong behind his favorite sister", tags: ["Brother", "Support", "Together"] };
+    case 4:
+      return { relation: "Siri's Smiles ✨", caption: "Radiant vibes and endless birthday cheer", tags: ["Rishi", "Portraits", "Joy"] };
+    case 5:
+      return { relation: "Sister (Rishi) 🌸", caption: "The beautiful star of our lives", tags: ["Rishi", "Birthday Girl", "Sister"] };
+    case 6:
+      return { relation: "Family Circle 🏡", caption: "Where life begins and love never ends", tags: ["Family", "Together", "Home"] };
+    case 7:
+      return { relation: "Festive Joy 🪔", caption: "Lighting up our home with sweet celebrations", tags: ["Celebration", "Festival", "Home"] };
+    case 8:
+      return { relation: "Mom's Guidance 💖", caption: "Her gentle words are our daily strength", tags: ["Mom", "Blessing", "Family"] };
+    case 9:
+      return { relation: "Sisterhood Sparkle 👭", caption: "Shared secrets and lifetime moments", tags: ["Rishi", "Sister", "Sparkle"] };
+    case 10:
+      return { relation: "Family Gathering 🍽️", caption: "Delicious meals and loudest laughter", tags: ["Family", "Gathering", "Food"] };
+    case 11:
+      return { relation: "Sibling Teasing 🤪", caption: "Fighting all day, but inseparable always", tags: ["Brother", "Teasing", "Sibling"] };
+    case 12:
+      return { relation: "Mom's Pride 🥰", caption: "Watching her children grow with pride", tags: ["Mom", "Love", "Pride"] };
+    case 13:
+      return { relation: "Holiday Escape 🏖️", caption: "Sunny days and waves of happiness", tags: ["Trip", "Vacation", "Family"] };
+    case 14:
+      return { relation: "Celebrations 🎉", caption: "Cheering for another beautiful year", tags: ["Celebration", "Party", "Joy"] };
+    case 15:
+      return { relation: "Rishi's Charm 🌟", caption: "Spreading warmth wherever she goes", tags: ["Rishi", "Sister", "Portraits"] };
+    case 16:
+      return { relation: "Family Portrait 🏡", caption: "Complete, united, and infinitely blessed", tags: ["Family", "Together", "Main"] };
+    case 17:
+      return { relation: "Winter Warmth ☕", caption: "Chilly evenings made warm by family conversations", tags: ["Family", "Conversations", "Home"] };
+    case 18:
+      return { relation: "Mom's Smile 😊", caption: "Her smile makes the entire house glow", tags: ["Mom", "Smile", "Love"] };
+    case 19:
+      return { relation: "Road Trip 🚗", caption: "Exploring new horizons together", tags: ["Trip", "Travel", "Adventure"] };
+    case 20:
+      return { relation: "Pinni's Banter 🤪", caption: "The playful arguments that we cherish", tags: ["Pinni", "Tom & Jerry", "Teasing"] };
+    case 21:
+      return { relation: "Playful Pinni 🎭", caption: "Arguments, reverse talk, and absolute love", tags: ["Pinni", "Tom & Jerry", "Wishes"] };
+    case 22:
+      return { relation: "Sunday Brunch 🥞", caption: "Relaxed mornings and endless cups of chai", tags: ["Family", "Weekend", "Together"] };
+    case 23:
+      return { relation: "Brotherly Love 🛡️", caption: "He will always fight the world for you", tags: ["Brother", "Protector", "Sibling"] };
+    case 24:
+      return { relation: "Mom's Comfort 🤗", caption: "The safest place in the world is her hug", tags: ["Mom", "Comfort", "Blessing"] };
+    case 25:
+      return { relation: "Birthday Bash 🎂", caption: "Cutting cakes and making magical wishes", tags: ["Celebration", "Birthday", "Cake"] };
+    case 26:
+      return { relation: "Pinni's Support 🤍", caption: "She is always cheering loudest for you", tags: ["Pinni", "Support", "Wishes"] };
+    case 27:
+      return { relation: "Rishi's Journey 🚀", caption: "Conquering goals and writing new adventures", tags: ["Rishi", "Future", "Portraits"] };
+    case 28:
+      return { relation: "Sweet Home 🏡", caption: "Where every corner holds a memory", tags: ["Family", "Home", "Love"] };
+    case 29:
+      return { relation: "Sibling Secrets 🤫", caption: "We share jokes that only we understand", tags: ["Sibling", "Brother", "Secrets"] };
+    case 30:
+      return { relation: "Mom's Hug 👩‍🍼", caption: "Her embrace shields us from all storms", tags: ["Mom", "Love", "Comfort"] };
+    case 31:
+      return { relation: "Grand Dinner 🥂", caption: "Celebrating milestones and shared successes", tags: ["Celebration", "Family", "Together"] };
+    case 32:
+      return { relation: "Pinni's Love 🤪", caption: "Teasing is just her way of saying she cares", tags: ["Pinni", "Love", "Tom & Jerry"] };
+    case 33:
+      return { relation: "Outing Day 🌳", caption: "Green grass, blue skies, and warm hearts", tags: ["Trip", "Outing", "Together"] };
+    case 34:
+      return { relation: "Rishi's Dreams ✨", caption: "Shining bright with expectations and goals", tags: ["Rishi", "Dreams", "Future"] };
+    case 35:
+      return { relation: "A Mother's Blessing 🌹", caption: "Her prayers are your silent shield", tags: ["Mom", "Blessing", "Chapter 2"] };
+    case 36:
+      return { relation: "Forever Together 💞", caption: "Bounded by love, today and for all tomorrows", tags: ["Family", "Love", "Together"] };
+    default:
+      return { relation: "Family Memory 📸", caption: "A beautiful moment captured in time", tags: ["Family", "Memory"] };
+  }
 };
 
 // Sort the image URLs naturally sequentially: family_1, family_2...
@@ -52,24 +164,135 @@ const fallbackImages = [
   'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=400&q=80'
 ];
 
-export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({ onBack }) => {
-  const [cards, setCards] = useState<FamilyCard[]>([]);
+const SECRET_VASAVI_LETTER = `To my favorite human, my absolute heart, Rishi 💖,
+
+Happy 20th Birthday, my love! 🎂
+
+I never thought I could miss someone this much until these walls became so quiet. Ever since your surgery, this place feels so empty. I walk in and there’s no one to fight with, no one to argue with over the silly little things, and no one to laugh with until our stomachs hurt. Everyone says we are like Tom and Jerry, fighting all day, but they don't know that at the end of the day, no matter how much we fight, we always settle down and sleep together.
+
+Every single night, I would drift off to sleep resting my head on your hand. And now... I’m sleeping alone, missing the warmth of your hand, unable to sleep peacefully. I toss and turn, wishing you were right here beside me.
+
+We support each other, we love each other, and we fight like crazy—but we are inseparable. You are not just a roommate to me, Rishi... you are my heart. I know the doctor said you need to take complete rest at home to heal, and I want you to be healthy more than anything. But these 2 months until you return to the hostel feel like an eternity. I am counting down the days, the hours, the minutes until you come back and we can stay together again.
+
+Your brother is making this website of memories just to see you smile, because you deserve the entire world on your 20th birthday. Please take care of yourself, heal quickly, and know that your Vasavi is waiting for you with open arms and a heart full of love.
+
+Happy Birthday, my heart. I love you, and I miss you more than words can ever say. 🤍
+
+Always yours,
+Vasavi`;
+
+export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({ 
+  onBack,
+  persistCards,
+  setPersistCards,
+  persistMatches,
+  setPersistMatches,
+  persistShowChapters,
+  setPersistShowChapters,
+  persistSecretUnlocked,
+  setPersistSecretUnlocked
+}) => {
+  const cards = persistCards;
+  const setCards = setPersistCards;
+  const matchesCount = persistMatches;
+  const setMatchesCount = setPersistMatches;
+  const showChapters = persistShowChapters;
+  const setShowChapters = setPersistShowChapters;
+  const isHeartSecretUnlocked = persistSecretUnlocked;
+  const setIsHeartSecretUnlocked = setPersistSecretUnlocked;
+
   const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
-  const [matchesCount, setMatchesCount] = useState(0);
-  
-  // Navigation states
-  const [showChapters, setShowChapters] = useState(false);
   const [activeTab, setActiveTab] = useState<'chapters' | 'album'>('chapters');
   const [currentChapterIdx, setCurrentChapterIdx] = useState(0);
   const [direction, setDirection] = useState(0); // -1 for prev, 1 for next
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showChapter5Prompt, setShowChapter5Prompt] = useState(false);
+  const [showMagicTransition, setShowMagicTransition] = useState(false);
+  const [polaroidStack, setPolaroidStack] = useState<number[]>([0, 1, 2]);
+  
+  // Evasion & PIN lock states
+  const [endButtonOffset, setEndButtonOffset] = useState({ x: 0, y: 0 });
+  const [showPinPad, setShowPinPad] = useState(false);
+  const [enteredPin, setEnteredPin] = useState('');
+  const [pinError, setPinError] = useState(false);
+
+  const handleEndButtonEvasion = () => {
+    if (window.playUISfx) window.playUISfx('click');
+    const rangeX = 140;
+    const rangeY = 70;
+    let nextX = (Math.random() - 0.5) * rangeX * 2;
+    let nextY = (Math.random() - 0.5) * rangeY * 2;
+    if (Math.abs(nextX) < 40) nextX = nextX > 0 ? 60 : -60;
+    if (Math.abs(nextY) < 20) nextY = nextY > 0 ? 30 : -30;
+    setEndButtonOffset({ x: nextX, y: nextY });
+  };
+
+  const checkPin = (pin: string) => {
+    if (pin.length === 6) {
+      if (pin === '080609') {
+        setTimeout(() => {
+          if (window.playUISfx) window.playUISfx('success');
+          setIsHeartSecretUnlocked(true);
+          setShowPinPad(false);
+          setEnteredPin('');
+        }, 300);
+      } else {
+        setTimeout(() => {
+          if (window.playUISfx) window.playUISfx('click');
+          setPinError(true);
+          setTimeout(() => {
+            setEnteredPin('');
+            setPinError(false);
+          }, 1000);
+        }, 300);
+      }
+    }
+  };
+
+  const rotatePolaroidStack = () => {
+    if (window.playUISfx) window.playUISfx('click');
+    setPolaroidStack((prev) => {
+      const next = [...prev];
+      const first = next.shift();
+      if (first !== undefined) {
+        next.push(first);
+      }
+      return next;
+    });
+  };
+
+  const handleConfirmChapter5 = () => {
+    if (window.playUISfx) window.playUISfx('teleport');
+    setShowChapter5Prompt(false);
+    setShowMagicTransition(true);
+
+    setTimeout(() => {
+      if (window.playUISfx) window.playUISfx('success');
+      setShowMagicTransition(false);
+      setCurrentChapterIdx(4); // Advance to Chapter 5
+    }, 2500);
+  };
 
   // Lightbox & Slideshow state for Family Album
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
   const [slideshowActive, setSlideshowActive] = useState(false);
 
+  // Filter state for Family Album
+  const [selectedFamilyTag, setSelectedFamilyTag] = useState<string>('All');
+  
+  const familyTagsList = ['All', 'Family', 'Rishi', 'Mom', 'Pinni', 'Brother', 'Trip', 'Celebration'];
+  
+  const filteredFamilyImages = familyImageUrls.map((url, idx) => ({
+    url,
+    originalIndex: idx,
+    metadata: getFamilyPhotoMetadata(idx)
+  })).filter(item => {
+    return selectedFamilyTag === 'All' || item.metadata.tags.includes(selectedFamilyTag);
+  });
+
   // Initialize and shuffle matching game cards (uses first 5 family images)
   useEffect(() => {
+    if (cards.length > 0) return; // Skip if already initialized!
     const templates = [
       { pairId: 'mom', label: "Mom's Love 👩‍🍼", image: familyImageUrls[1] || fallbackImages[0] },
       { pairId: 'mom', label: "Mom's Love 👩‍🍼", image: familyImageUrls[1] || fallbackImages[0] },
@@ -93,29 +316,29 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({ onBack }) 
   // Keyboard navigation for Lightbox
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (lightboxIdx === null) return;
+      if (lightboxIdx === null || filteredFamilyImages.length === 0) return;
       if (e.key === 'ArrowLeft') {
         if (window.playUISfx) window.playUISfx('click');
-        setLightboxIdx((prev) => (prev !== null ? (prev - 1 + familyImageUrls.length) % familyImageUrls.length : null));
+        setLightboxIdx((prev) => (prev !== null ? (prev - 1 + filteredFamilyImages.length) % filteredFamilyImages.length : null));
       } else if (e.key === 'ArrowRight') {
         if (window.playUISfx) window.playUISfx('click');
-        setLightboxIdx((prev) => (prev !== null ? (prev + 1) % familyImageUrls.length : null));
+        setLightboxIdx((prev) => (prev !== null ? (prev + 1) % filteredFamilyImages.length : null));
       } else if (e.key === 'Escape') {
         setLightboxIdx(null);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxIdx]);
+  }, [lightboxIdx, filteredFamilyImages.length]);
 
   // Slideshow Autoplay Timer
   useEffect(() => {
-    if (!slideshowActive || lightboxIdx === null) return;
+    if (!slideshowActive || lightboxIdx === null || filteredFamilyImages.length === 0) return;
     const interval = setInterval(() => {
-      setLightboxIdx((prev) => (prev !== null ? (prev + 1) % familyImageUrls.length : null));
+      setLightboxIdx((prev) => (prev !== null ? (prev + 1) % filteredFamilyImages.length : null));
     }, 3000);
     return () => clearInterval(interval);
-  }, [slideshowActive, lightboxIdx]);
+  }, [slideshowActive, lightboxIdx, filteredFamilyImages.length]);
 
   // Handle Card Click (Matching Game)
   const handleCardClick = (idx: number) => {
@@ -205,18 +428,23 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({ onBack }) 
       icon: <User size={20} className="text-amber-400 animate-pulse" />
     },
     {
-      title: "Chapter 5: Chapters Yet Written",
-      quote: "The future belongs to those who believe in the beauty of their dreams.",
-      story: "This is just the beginning, Siri. A blank page lies ahead, waiting for your touch. We can't wait to see you conquer your goals, write new adventures, and fill the world with your radiant light. We love you infinitely! Happy Birthday! 🎂💖",
-      image: familyImageUrls[9] || fallbackImages[3],
-      themeColor: "from-violet-500/20 to-fuchsia-500/20",
-      icon: <Sparkles size={20} className="text-violet-400 animate-pulse" />
+      title: "Chapter 5: A Message From Her Heart",
+      quote: "No matter where we are, our hearts beat as one, and my world is incomplete without you.",
+      story: `Happy 20th Birthday, Rishi! 🎂💖 Wishing you a year full of happiness, laughter, and endless success. Even though we are apart right now, you are always in my thoughts. Have the most wonderful day, my dear!
+
+— Love, Vasavi ✨`,
+      image: heartImageUrls[0] || fallbackImages[3],
+      themeColor: "from-red-500/20 to-rose-500/20",
+      icon: <Heart size={20} className="text-rose-400 animate-pulse fill-rose-400" />
     }
   ];
 
   const handleNextChapter = () => {
     if (window.playUISfx) window.playUISfx('click');
-    if (currentChapterIdx === chapters.length - 1) {
+    if (currentChapterIdx === 3) {
+      // Intercept going to Chapter 5
+      setShowChapter5Prompt(true);
+    } else if (currentChapterIdx === chapters.length - 1) {
       setShowCelebration(true);
     } else {
       setDirection(1);
@@ -364,10 +592,29 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({ onBack }) 
               ))}
             </div>
 
-            {/* Score Tracker */}
-            <div className="flex items-center gap-3 font-mono text-xs text-zinc-500 bg-white/3 border border-white/5 px-4 py-2 rounded-full">
-              <span>MATCHED:</span>
-              <span className="text-amber-300 font-bold">{matchesCount} / 5</span>
+            {/* Score Tracker & Go Forward Button */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex items-center gap-3 font-mono text-xs text-zinc-500 bg-white/3 border border-white/5 px-4 py-2 rounded-full">
+                <span>MATCHED:</span>
+                <span className="text-amber-300 font-bold">{matchesCount} / 5</span>
+              </div>
+              
+              {matchesCount === 5 && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  onClick={() => {
+                    if (window.playUISfx) window.playUISfx('click');
+                    setShowChapters(true);
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-6 py-3 bg-gradient-to-r from-amber-300 to-amber-400 text-zinc-950 font-bold rounded-xl text-xs font-mono tracking-widest uppercase cursor-pointer shadow-[0_0_15px_rgba(252,211,77,0.3)] flex items-center gap-1.5"
+                >
+                  <Unlock size={12} />
+                  Enter Memory Vault 🔑
+                </motion.button>
+              )}
             </div>
           </div>
         )}
@@ -449,19 +696,70 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({ onBack }) 
                     >
                       <div className={`absolute -right-20 -top-20 w-64 h-64 rounded-full bg-gradient-to-br ${chapters[currentChapterIdx].themeColor} blur-[80px] pointer-events-none`} />
 
-                      {/* 3D hover image */}
-                      <motion.div
-                        className="relative w-full md:w-2/5 aspect-[4/5] rounded-2xl overflow-hidden border border-white/15 shadow-xl select-none"
-                        whileHover={{ scale: 1.03, rotateY: 8, rotateX: -4 }}
-                        style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
-                      >
-                        <img
-                          src={chapters[currentChapterIdx].image}
-                          alt={chapters[currentChapterIdx].title}
-                          className="w-full h-full object-cover filter brightness-95"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                      </motion.div>
+                      {/* 3D hover image or 3D Polaroid stack for Chapter 5 */}
+                      {currentChapterIdx === 4 ? (
+                        <div className="relative w-full md:w-2/5 aspect-[4/5] flex items-center justify-center select-none" style={{ perspective: 1200 }}>
+                          {polaroidStack.map((imgIdx, stackPos) => {
+                            const isFront = stackPos === 0;
+                            const rotations = [0, -6, 5];
+                            const xOffsets = [0, -15, 15];
+                            const yOffsets = [0, 8, -8];
+                            const scales = [1, 0.96, 0.92];
+                            const zIndices = [30, 20, 10];
+                            
+                            const imageUrl = heartImageUrls[imgIdx % heartImageUrls.length] || fallbackImages[stackPos % fallbackImages.length];
+
+                            return (
+                              <motion.div
+                                key={imgIdx}
+                                style={{
+                                  zIndex: zIndices[stackPos],
+                                  transformStyle: 'preserve-3d',
+                                }}
+                                animate={{
+                                  rotateZ: rotations[stackPos],
+                                  x: xOffsets[stackPos],
+                                  y: yOffsets[stackPos],
+                                  scale: scales[stackPos],
+                                }}
+                                transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+                                whileHover={isFront ? { scale: 1.05, rotateY: 12, rotateX: -6 } : {}}
+                                onClick={isFront ? rotatePolaroidStack : undefined}
+                                className="absolute w-[85%] aspect-[3.5/4.5] bg-white p-3.5 pb-10 rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.6)] border border-zinc-200/50 cursor-pointer flex flex-col justify-between"
+                              >
+                                <div className="w-full aspect-square overflow-hidden bg-zinc-950 rounded-xl border border-zinc-200/20">
+                                  <img
+                                    src={imageUrl}
+                                    alt={`Heart memory ${imgIdx + 1}`}
+                                    className="w-full h-full object-cover filter brightness-95 saturate-110"
+                                  />
+                                </div>
+                                <div className="mt-3 text-center">
+                                  <span className="font-serif italic text-zinc-800 text-xs md:text-sm tracking-wider block font-extrabold">
+                                    {imgIdx === 0 ? "You & Me 💖" : imgIdx === 1 ? "My Heart, Vasavi ✨" : "Inseparable Roomies 👭"}
+                                  </span>
+                                  <span className="text-[10px] text-zinc-400 font-mono block mt-1">
+                                    Photo {imgIdx + 1} of {heartImageUrls.length || 3} • Tap to Rotate
+                                  </span>
+                                </div>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <motion.div
+                          className="relative w-full md:w-2/5 aspect-[4/5] rounded-2xl overflow-hidden border border-white/15 shadow-xl select-none"
+                          whileHover={{ scale: 1.03, rotateY: 8, rotateX: -4 }}
+                          style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
+                        >
+                          <img
+                            src={chapters[currentChapterIdx].image}
+                            alt={chapters[currentChapterIdx].title}
+                            className="w-full h-full object-cover filter brightness-95"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                        </motion.div>
+                      )}
 
                       {/* Story elements */}
                       <div className="w-full md:w-3/5 space-y-5 flex flex-col justify-center">
@@ -478,9 +776,35 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({ onBack }) 
                           </p>
                         </div>
 
-                        <p className="font-sans text-sm md:text-[15px] text-zinc-300 leading-relaxed font-light">
-                          {chapters[currentChapterIdx].story}
+                        <p className="font-sans text-sm md:text-[15px] text-zinc-300 leading-relaxed font-light whitespace-pre-wrap">
+                          {currentChapterIdx === 4 && isHeartSecretUnlocked 
+                            ? SECRET_VASAVI_LETTER 
+                            : chapters[currentChapterIdx].story}
                         </p>
+
+                        {currentChapterIdx === 4 && (
+                          <div className="pt-2">
+                            {!isHeartSecretUnlocked ? (
+                              <motion.button
+                                onClick={() => {
+                                  if (window.playUISfx) window.playUISfx('click');
+                                  setShowPinPad(true);
+                                }}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="px-4 py-2.5 bg-gradient-to-r from-rose-500 to-pink-600 hover:shadow-[0_0_12px_rgba(244,63,94,0.3)] text-white font-bold rounded-xl text-xs font-mono tracking-wider uppercase cursor-pointer flex items-center gap-1.5"
+                              >
+                                <Lock size={12} />
+                                Unlock Her Heart's Secrets 🔑
+                              </motion.button>
+                            ) : (
+                              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-300 text-[10px] font-mono tracking-wider uppercase select-none">
+                                <Unlock size={10} className="animate-pulse text-rose-400" />
+                                <span>Deep Connection Unlocked ❤️</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </motion.div>
                   </AnimatePresence>
@@ -521,39 +845,80 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({ onBack }) 
                 <div className="text-center space-y-1">
                   <h3 className="font-serif italic text-2xl text-amber-200">The Family Album</h3>
                   <p className="font-sans text-xs text-zinc-500 uppercase tracking-widest">
-                    Click any photo to open the interactive slideshow ({familyImageUrls.length} Photos)
+                    Click any photo to open the interactive slideshow ({filteredFamilyImages.length} Photos)
                   </p>
                 </div>
 
-                {/* Masonry Photo Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full px-2">
-                  {familyImageUrls.map((url, idx) => (
-                    <motion.div
-                      key={idx}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: (idx % 12) * 0.05 }}
-                      whileHover={{ scale: 1.04, rotateY: 5, rotateX: -5 }}
-                      style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
-                      onClick={() => {
-                        if (window.playUISfx) window.playUISfx('click');
-                        setLightboxIdx(idx);
-                      }}
-                      className="relative aspect-square rounded-2xl overflow-hidden border border-white/8 shadow-md hover:border-amber-400/40 hover:shadow-[0_0_15px_rgba(252,211,77,0.15)] cursor-pointer bg-zinc-900 group transition-all duration-300 select-none"
-                    >
-                      <img
-                        src={url}
-                        alt={`Family memory ${idx + 1}`}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3.5">
-                        <span className="text-[10px] font-mono text-amber-200 uppercase font-semibold flex items-center gap-1">
-                          <Camera size={10} /> Photo #{idx + 1}
-                        </span>
-                      </div>
-                    </motion.div>
-                  ))}
+                {/* Filter Badges */}
+                <div className="flex flex-wrap gap-2 justify-center max-w-2xl px-4 select-none">
+                  {familyTagsList.map((tag) => {
+                    const isActive = selectedFamilyTag === tag;
+                    return (
+                      <button
+                        key={tag}
+                        onClick={() => {
+                          if (window.playUISfx) window.playUISfx('click');
+                          setSelectedFamilyTag(tag);
+                          setLightboxIdx(null);
+                        }}
+                        className={`px-3 py-1 rounded-full text-[10px] font-mono tracking-wider uppercase transition-all duration-200 cursor-pointer ${
+                          isActive
+                            ? 'bg-amber-300 text-zinc-950 font-bold border border-amber-300 shadow-[0_0_12px_rgba(252,211,77,0.3)]'
+                            : 'bg-white/3 border border-white/8 text-zinc-400 hover:text-zinc-200 hover:border-white/15'
+                        }`}
+                      >
+                        {tag === 'All' ? '🌐 All' : tag}
+                      </button>
+                    );
+                  })}
                 </div>
+
+                {/* Photo Container */}
+                {filteredFamilyImages.length === 0 ? (
+                  <div className="text-center py-10 font-sans text-sm text-zinc-500">
+                    No memories found for this filter.
+                  </div>
+                ) : (
+                  /* NORMAL GRID WITH CHAPTER STYLING */
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full px-2 select-none">
+                    {filteredFamilyImages.map((item, idx) => (
+                      <motion.div
+                        key={item.originalIndex}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: (idx % 12) * 0.04 }}
+                        whileHover={{ scale: 1.03, rotateY: 8, rotateX: -4 }}
+                        style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
+                        onClick={() => {
+                          if (window.playUISfx) window.playUISfx('click');
+                          setLightboxIdx(idx);
+                        }}
+                        className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/15 shadow-xl cursor-pointer bg-zinc-900 group transition-all duration-300"
+                      >
+                        <img
+                          src={item.url}
+                          alt={item.metadata.caption}
+                          className="w-full h-full object-cover filter brightness-95 transition-transform duration-500 group-hover:scale-102"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent flex flex-col justify-end p-4">
+                          <span className="text-[9px] font-mono text-amber-300 uppercase tracking-widest block font-bold mb-1">
+                            {item.metadata.relation}
+                          </span>
+                          <h5 className="font-serif italic text-white text-xs leading-tight block group-hover:text-amber-200 transition-colors">
+                            {item.metadata.caption}
+                          </h5>
+                          <div className="flex flex-wrap gap-1 mt-2 opacity-80">
+                            {item.metadata.tags.slice(0, 2).map((t) => (
+                              <span key={t} className="text-[7px] font-mono bg-white/5 border border-white/10 text-zinc-400 px-1.5 py-0.2 rounded uppercase">
+                                {t}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </motion.div>
             )}
           </div>
@@ -625,6 +990,166 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({ onBack }) 
 
       </div>
 
+      {/* Chapter 5 Confirmation Prompt */}
+      <AnimatePresence>
+        {showChapter5Prompt && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="w-full max-w-md glass-panel p-8 rounded-3xl border border-rose-500/20 shadow-[0_0_30px_rgba(244,63,94,0.15)] bg-gradient-to-br from-zinc-950 via-zinc-900 to-rose-950/20 text-center space-y-6 relative overflow-hidden"
+            >
+              <div className="absolute -top-10 -left-10 w-32 h-32 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
+              
+              <div className="mx-auto w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center shadow-[0_0_20px_rgba(244,63,94,0.25)] animate-pulse">
+                <Heart size={28} className="text-rose-400 fill-rose-400/20" />
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="font-serif italic text-2xl text-rose-200">
+                  Shall we end up here...
+                </h3>
+                <p className="font-sans text-sm text-zinc-400 leading-relaxed">
+                  Or shall we see Chapter 5?
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 pt-2">
+                <button
+                  onClick={handleConfirmChapter5}
+                  className="w-full py-3 bg-gradient-to-r from-rose-500 to-red-600 text-white font-semibold rounded-xl cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(244,63,94,0.4)] transition-all duration-300 active:scale-95 text-xs font-mono tracking-wider uppercase flex items-center justify-center gap-1.5"
+                >
+                  <Sparkles size={14} className="animate-spin" />
+                  Unlock Chapter 5 (Her Heart)
+                </button>
+                
+                <motion.button
+                  animate={{ x: endButtonOffset.x, y: endButtonOffset.y }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  onMouseEnter={handleEndButtonEvasion}
+                  onTouchStart={handleEndButtonEvasion}
+                  onClick={handleEndButtonEvasion}
+                  className="w-full py-3 border border-white/10 rounded-xl font-mono text-[11px] uppercase tracking-wider text-zinc-400 hover:border-white/20 hover:text-white cursor-pointer transition-all select-none"
+                >
+                  End Here & Celebrate
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Magic Portal Transition */}
+      <AnimatePresence>
+        {showMagicTransition && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center overflow-hidden pointer-events-auto"
+          >
+            <div className="absolute inset-0 z-0 flex items-center justify-center">
+              {[1, 2, 3, 4, 5].map((ring) => (
+                <motion.div
+                  key={ring}
+                  className="absolute rounded-full border border-rose-500/20"
+                  initial={{ width: 10, height: 10, opacity: 0, rotate: 0 }}
+                  animate={{
+                    width: [10, 1000],
+                    height: [10, 1000],
+                    opacity: [0, 0.8, 0],
+                    rotate: ring % 2 === 0 ? [0, 360] : [360, 0],
+                  }}
+                  transition={{
+                    duration: 2.2,
+                    repeat: Infinity,
+                    delay: ring * 0.4,
+                    ease: 'easeOut',
+                  }}
+                />
+              ))}
+              <div className="absolute w-full h-full bg-gradient-radial from-rose-500/10 via-transparent to-transparent opacity-60" />
+            </div>
+
+            <div className="absolute inset-0 z-10 pointer-events-none">
+              {Array.from({ length: 25 }).map((_, i) => {
+                const startX = Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 800);
+                const endX = startX + (Math.random() - 0.5) * 300;
+                return (
+                  <motion.div
+                    key={i}
+                    className="absolute text-rose-500/40"
+                    initial={{
+                      x: startX,
+                      y: (typeof window !== 'undefined' ? window.innerHeight : 800) + 50,
+                      scale: Math.random() * 0.5 + 0.5,
+                      opacity: 0,
+                    }}
+                    animate={{
+                      y: -100,
+                      x: endX,
+                      opacity: [0, 0.7, 0],
+                      rotate: Math.random() * 360,
+                    }}
+                    transition={{
+                      duration: Math.random() * 2 + 1.5,
+                      repeat: Infinity,
+                      delay: Math.random() * 1.5,
+                      ease: 'easeOut',
+                    }}
+                  >
+                    <Heart size={24} className="fill-current" />
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            <div className="relative z-20 text-center space-y-6 px-4">
+              <motion.div
+                animate={{
+                  rotateY: 360,
+                  scale: [0.8, 1.2, 1],
+                }}
+                transition={{
+                  rotateY: { duration: 2.5, repeat: Infinity, ease: 'linear' },
+                  scale: { duration: 1.5, ease: 'easeInOut' },
+                }}
+                className="mx-auto w-24 h-24 rounded-full bg-gradient-to-tr from-rose-500 via-pink-500 to-purple-600 flex items-center justify-center shadow-[0_0_50px_rgba(244,63,94,0.5)] border border-rose-400"
+              >
+                <Sparkles size={40} className="text-white animate-pulse" />
+              </motion.div>
+
+              <div className="space-y-2">
+                <motion.h2
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="font-serif italic text-3xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-rose-300 via-pink-200 to-rose-300 font-extrabold tracking-wide drop-shadow glow-pink"
+                >
+                  Unlocking Chapter 5...
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="font-mono text-[10px] tracking-[0.25em] text-rose-400 uppercase font-semibold animate-pulse"
+                >
+                  Connecting to Her Heart's Frequency 💖
+                </motion.p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* FULL-SCREEN LIGHTBOX & SLIDESHOW OVERLAY */}
       <AnimatePresence>
         {lightboxIdx !== null && (
@@ -637,7 +1162,7 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({ onBack }) 
             {/* Top Bar Navigation */}
             <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-10 text-white select-none">
               <span className="font-mono text-xs text-zinc-400 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
-                PHOTO {lightboxIdx + 1} OF {familyImageUrls.length}
+                PHOTO {lightboxIdx + 1} OF {filteredFamilyImages.length}
               </span>
 
               {/* Controls */}
@@ -673,26 +1198,58 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({ onBack }) 
             <button
               onClick={() => {
                 if (window.playUISfx) window.playUISfx('click');
-                setLightboxIdx((prev) => (prev !== null ? (prev - 1 + familyImageUrls.length) % familyImageUrls.length : null));
+                setLightboxIdx((prev) => (prev !== null ? (prev - 1 + filteredFamilyImages.length) % filteredFamilyImages.length : null));
               }}
               className="absolute left-6 w-12 h-12 rounded-full bg-white/5 border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white flex items-center justify-center cursor-pointer active:scale-95 z-10"
             >
               <ArrowLeft size={20} />
             </button>
 
-            {/* Center Slide Container */}
-            <div className="w-11/12 max-w-4xl max-h-[75vh] flex items-center justify-center relative">
+            {/* Center Slide Container (Styled like Memory Chapters) */}
+            <div className="w-11/12 max-w-4xl flex flex-col items-center gap-4 relative">
+              <div className="max-h-[60vh] flex items-center justify-center relative overflow-hidden rounded-2xl border border-white/15 shadow-2xl">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={lightboxIdx}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.3 }}
+                    src={filteredFamilyImages[lightboxIdx]?.url}
+                    alt={filteredFamilyImages[lightboxIdx]?.metadata.caption}
+                    className="max-w-full max-h-[60vh] object-contain filter brightness-95 saturate-[1.05]"
+                  />
+                </AnimatePresence>
+              </div>
+              
+              {/* Photo Description & Tags Panel */}
               <AnimatePresence mode="wait">
-                <motion.img
-                  key={lightboxIdx}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.3 }}
-                  src={familyImageUrls[lightboxIdx]}
-                  alt={`Family album ${lightboxIdx + 1}`}
-                  className="max-w-full max-h-[75vh] object-contain rounded-2xl border border-white/10 shadow-2xl"
-                />
+                {filteredFamilyImages[lightboxIdx] && (
+                  <motion.div
+                    key={`desc-${lightboxIdx}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="w-full max-w-lg glass-panel p-4.5 rounded-2xl border border-white/10 text-center space-y-2 bg-zinc-950/85 backdrop-blur-md shadow-xl select-none"
+                  >
+                    <div className="space-y-1">
+                      <span className="text-xs font-mono text-amber-300 uppercase tracking-widest block font-bold">
+                        {filteredFamilyImages[lightboxIdx].metadata.relation}
+                      </span>
+                      <h4 className="font-serif italic text-white text-sm leading-relaxed">
+                        "{filteredFamilyImages[lightboxIdx].metadata.caption}"
+                      </h4>
+                    </div>
+                    {/* Tags list */}
+                    <div className="flex flex-wrap gap-1.5 justify-center pt-1">
+                      {filteredFamilyImages[lightboxIdx].metadata.tags.map((t) => (
+                        <span key={t} className="text-[9px] font-mono bg-white/5 border border-white/10 text-zinc-400 px-2.5 py-0.5 rounded-md uppercase font-semibold">
+                          #{t}
+                        </span>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
               </AnimatePresence>
             </div>
 
@@ -700,7 +1257,7 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({ onBack }) 
             <button
               onClick={() => {
                 if (window.playUISfx) window.playUISfx('click');
-                setLightboxIdx((prev) => (prev !== null ? (prev + 1) % familyImageUrls.length : null));
+                setLightboxIdx((prev) => (prev !== null ? (prev + 1) % filteredFamilyImages.length : null));
               }}
               className="absolute right-6 w-12 h-12 rounded-full bg-white/5 border border-white/10 hover:border-white/20 text-zinc-300 hover:text-white flex items-center justify-center cursor-pointer active:scale-95 z-10"
             >
@@ -711,6 +1268,141 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({ onBack }) 
             <span className="absolute bottom-6 font-mono text-[9px] text-zinc-500 uppercase tracking-widest">
               Use Left / Right arrow keys to browse • Esc to close
             </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* PIN Pad Overlay */}
+      <AnimatePresence>
+        {showPinPad && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={pinError ? { x: [0, -10, 10, -10, 10, -5, 5, 0], opacity: 1, scale: 1, y: 0 } : { x: 0, opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ 
+                type: 'spring', 
+                damping: 25, 
+                stiffness: 200,
+                x: { duration: 0.4 } 
+              }}
+              className={`w-full max-w-sm glass-panel p-6 rounded-3xl border ${
+                pinError 
+                  ? 'border-red-500/40 shadow-[0_0_30px_rgba(239,68,68,0.25)]' 
+                  : 'border-rose-500/20 shadow-[0_0_30px_rgba(244,63,94,0.15)]'
+              } bg-gradient-to-br from-zinc-950 via-zinc-900 to-rose-950/20 text-center space-y-6 relative overflow-hidden`}
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              <div className="absolute -top-10 -left-10 w-28 h-28 bg-rose-500/5 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-10 -right-10 w-28 h-28 bg-rose-500/5 rounded-full blur-2xl pointer-events-none" />
+              
+              <button
+                onClick={() => {
+                  if (window.playUISfx) window.playUISfx('click');
+                  setShowPinPad(false);
+                  setEnteredPin('');
+                  setPinError(false);
+                }}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 border border-white/10 text-zinc-400 hover:text-white flex items-center justify-center cursor-pointer active:scale-95 z-10"
+              >
+                <X size={14} />
+              </button>
+
+              <div className="mx-auto w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(244,63,94,0.2)]">
+                <Lock size={20} className="text-rose-400 fill-rose-400/10" />
+              </div>
+
+              <div className="space-y-1">
+                <h4 className="font-serif italic text-xl text-rose-200">
+                  Enter The Heart Passcode
+                </h4>
+                <p className="font-mono text-[9px] tracking-widest text-zinc-500 uppercase">
+                  To view Vasavi's secret wishes
+                </p>
+              </div>
+
+              <div className="flex justify-center gap-3 py-2">
+                {[0, 1, 2, 3, 4, 5].map((idx) => (
+                  <motion.div
+                    key={idx}
+                    className={`w-3.5 h-3.5 rounded-full border ${
+                      pinError 
+                        ? 'bg-red-500/20 border-red-500' 
+                        : enteredPin.length > idx 
+                          ? 'bg-rose-500 border-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.5)]' 
+                          : 'border-zinc-700 bg-black/40'
+                    }`}
+                    animate={pinError ? { x: [0, -4, 4, -4, 4, 0] } : {}}
+                    transition={{ duration: 0.4 }}
+                  />
+                ))}
+              </div>
+
+              <div className="grid grid-cols-3 gap-2.5 max-w-[260px] mx-auto pt-2">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                  <motion.button
+                    key={num}
+                    onClick={() => {
+                      if (window.playUISfx) window.playUISfx('click');
+                      if (enteredPin.length < 6 && !pinError) {
+                        const nextPin = enteredPin + num;
+                        setEnteredPin(nextPin);
+                        checkPin(nextPin);
+                      }
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="aspect-square rounded-2xl glass-panel border border-white/5 bg-white/2 hover:border-rose-500/20 text-zinc-200 text-lg font-mono flex items-center justify-center cursor-pointer shadow-sm font-semibold active:border-rose-500/40"
+                  >
+                    {num}
+                  </motion.button>
+                ))}
+                
+                <button
+                  onClick={() => {
+                    if (window.playUISfx) window.playUISfx('click');
+                    setEnteredPin('');
+                    setPinError(false);
+                  }}
+                  className="aspect-square rounded-2xl glass-panel border border-white/5 bg-white/2 hover:border-red-500/20 text-red-400 text-xs font-mono uppercase tracking-wider flex items-center justify-center cursor-pointer"
+                >
+                  Clear
+                </button>
+                
+                <motion.button
+                  onClick={() => {
+                    if (window.playUISfx) window.playUISfx('click');
+                    if (enteredPin.length < 6 && !pinError) {
+                      const nextPin = enteredPin + '0';
+                      setEnteredPin(nextPin);
+                      checkPin(nextPin);
+                    }
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="aspect-square rounded-2xl glass-panel border border-white/5 bg-white/2 hover:border-rose-500/20 text-zinc-200 text-lg font-mono flex items-center justify-center cursor-pointer shadow-sm font-semibold"
+                >
+                  0
+                </motion.button>
+                
+                <button
+                  onClick={() => {
+                    if (window.playUISfx) window.playUISfx('click');
+                    if (enteredPin.length > 0 && !pinError) {
+                      setEnteredPin(enteredPin.slice(0, -1));
+                    }
+                  }}
+                  className="aspect-square rounded-2xl glass-panel border border-white/5 bg-white/2 hover:border-zinc-500/25 text-zinc-400 text-xs font-mono uppercase tracking-wider flex items-center justify-center cursor-pointer"
+                >
+                  Del
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

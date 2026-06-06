@@ -18,6 +18,12 @@ function App() {
   const [allMatched, setAllMatched] = useState(false);
   const [showPromise, setShowPromise] = useState(false);
 
+  // States to persist Family Memory Vault progress
+  const [familyVaultCards, setFamilyVaultCards] = useState<any[]>([]);
+  const [familyVaultMatches, setFamilyVaultMatches] = useState(0);
+  const [familyVaultShowChapters, setFamilyVaultShowChapters] = useState(false);
+  const [familyVaultSecretUnlocked, setFamilyVaultSecretUnlocked] = useState(false);
+
   // Auto-scroll to the Climax/Promise when manually triggered
   useEffect(() => {
     if (showPromise) {
@@ -133,7 +139,17 @@ function App() {
               transition={{ duration: 0.8 }}
               className="w-full animate-fade-in"
             >
-              <FamilyMemoryVault onBack={() => setStage('game')} />
+              <FamilyMemoryVault 
+                onBack={() => setStage('game')}
+                persistCards={familyVaultCards}
+                setPersistCards={setFamilyVaultCards}
+                persistMatches={familyVaultMatches}
+                setPersistMatches={setFamilyVaultMatches}
+                persistShowChapters={familyVaultShowChapters}
+                setPersistShowChapters={setFamilyVaultShowChapters}
+                persistSecretUnlocked={familyVaultSecretUnlocked}
+                setPersistSecretUnlocked={setFamilyVaultSecretUnlocked}
+              />
             </motion.div>
           )}
         </AnimatePresence>
