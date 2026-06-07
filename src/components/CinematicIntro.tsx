@@ -116,7 +116,7 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({ onComplete }) =>
               transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
               style={{ backgroundSize: '200% 200%' }}
             >
-              Happy Birthday to my amazing sister! 🎉✨
+              Happy Birthday to my amazing Amma! 🎉✨
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}

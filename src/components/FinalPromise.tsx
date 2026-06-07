@@ -17,9 +17,9 @@ export const FinalPromise: React.FC<FinalPromiseProps> = ({ onNextSurprise }) =>
     return () => clearTimeout(timer);
   }, []);
   const sentences = [
-    "Through every high and every low, remember that you never walk alone.",
-    "Your brother will always be right beside you, shielding you, cheering for you, until his very last breath.",
-    "Happy Birthday to my favorite person. 🤍"
+    "No matter where life takes us next, remember that you never walk alone.",
+    "Your brother will always be right beside you, shielding you and cheering for you through every storm.",
+    "Happy Birthday, my dearest Amma. 🤍"
   ];
 
   const containerVariants: any = {

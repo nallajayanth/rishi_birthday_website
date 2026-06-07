@@ -397,7 +397,7 @@ export const AudioEngine: React.FC = () => {
                         : 'border-white/10 text-zinc-400 bg-white/2 hover:bg-white/5'
                     }`}
                   >
-                    🎵 Gaaju Bomma (Sister Special)
+                    🎵 Gaaju Bomma (Amma Special)
                   </button>
                   <button
                     onClick={() => {

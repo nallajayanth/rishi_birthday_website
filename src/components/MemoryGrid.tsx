@@ -433,12 +433,12 @@ const siblingCaptions = [
   "No matter how old we get, we'll always be the same silly kids pulling faces at each other! 🎡😜",
   "Seeing you happy and smiling is the best part of any celebration. You deserve the world! ✨👫",
   "Side-by-side or miles apart, we are connected by a bond that can never be broken. 📸💜",
-  "Adore you, tease you, and squeeze your cheeks! Thanks for always being my sweet sister, even when I'm annoying. 😂❤️",
-  "Cafe dates and deep talks. I'm so lucky to have a sister who is also my best friend. ☕✨",
+  "Adore you, tease you, and squeeze your cheeks! Thanks for always being my sweet Amma, even when I'm annoying. 😂❤️",
+  "Cafe dates and deep talks. I'm so lucky to have my Amma who is also my best friend. ☕✨",
   "Cherishing the simple moments with you. Your laughter makes our home so much brighter! 🌸💛",
   "Golden hour with my constant. No matter where life takes us, I'll always have your back! 🌅🧡",
   "Having you by my side makes every journey easier. Cheers to more food, fun, and endless laughs! 🍕🥤",
-  "Temple visits and prayers for you. Thankful to God every day for blessing me with a sister like you. 🪔🙏",
+  "Temple visits and prayers for you. Thankful to God every day for blessing me with my Amma. 🪔🙏",
   "No matter how much we tease, fight, or pull faces, you will always be my favorite human! 🎢👊"
 ];
 
@@ -464,7 +464,7 @@ const siblingGalleryData = siblingImageUrls.map((url, index) => {
   return {
     id: 300 + index,
     image: url,
-    caption: siblingCaptions[captionIndex] || `Brother & Sister Memory #${num} 🤍`,
+    caption: siblingCaptions[captionIndex] || `Brother & Amma Memory #${num} 🤍`,
     tags: getSiblingTagsForIndex(num - 1)
   };
 });
@@ -1525,7 +1525,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
           </div>
         </div>
 
-        {/* CHAPTER 5: BROTHER & SISTER */}
+        {/* CHAPTER 5: BROTHER & AMMA */}
         <div id="chapter-card-sibling" className="relative">
           <AnimatePresence>
             {!unlockedGalleries.sibling && (
@@ -1537,9 +1537,9 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
                 <div className="w-12 h-12 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center text-biolum-purple mb-4">
                   <Lock size={20} />
                 </div>
-                <h4 className="font-serif text-xl font-bold text-white mb-1">Brother & Sister</h4>
+                <h4 className="font-serif text-xl font-bold text-white mb-1">Brother & Amma</h4>
                 <p className="text-zinc-500 font-sans text-xs max-w-[200px]">
-                  Match the **Sibling Cards** to unlock this chapter.
+                  Match the **Amma Cards** to unlock this chapter.
                 </p>
               </motion.div>
             )}
@@ -1550,7 +1550,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
             <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
               <h4 className="font-serif text-xl font-bold text-white flex items-center gap-2">
                 <span className="text-biolum-purple font-mono text-sm">[05]</span>
-                Brother & Sister
+                Brother & Amma
               </h4>
               <span className="text-[10px] bg-biolum-purple/15 text-biolum-purple border border-biolum-purple/20 px-2 py-0.5 rounded-full font-mono flex items-center gap-1 uppercase tracking-wider">
                 <Unlock size={8} /> Unlocked
@@ -2154,10 +2154,10 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
             >
               <div className="text-center mb-8">
                 <h4 className="font-serif text-3xl font-extrabold text-white mb-2 glow-purple text-biolum-purple">
-                  Brother & Sister Scrapbook 📖✨
+                  Brother & Amma Scrapbook 📖✨
                 </h4>
                 <p className="text-zinc-400 font-sans text-sm max-w-md mx-auto">
-                  A unique interactive scrapbook created for the best sister. Every memory here is precious!
+                  A unique interactive scrapbook created for the best Amma. Every memory here is precious!
                 </p>
               </div>
 
@@ -2180,15 +2180,15 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
                 </div>
 
                 <div className="mt-4 font-sans text-zinc-100 leading-relaxed text-sm md:text-base space-y-4 pr-2 pl-2 border-l-2 border-biolum-purple/20">
-                  <p className="font-serif text-lg md:text-xl font-bold text-biolum-purple italic">To My Dearest Sister,</p>
+                  <p className="font-serif text-lg md:text-xl font-bold text-biolum-purple italic">To My Dearest Amma,</p>
                   <p className="font-serif italic text-zinc-200">
-                    "Looking through our photos, I realized we might not have hundreds of selfies together. But every single picture we do have is filled with so much genuine laughter, crazy teasing, and pure love."
+                    "They say family is given, but the most beautiful family is the one we choose. Two years ago, we were strangers at the institute; today, you are a part of my soul. We may not have childhood photos together, but every single memory we have made since is etched in gold."
                   </p>
                   <p className="font-serif italic text-zinc-200">
-                    "You are not just my sister; you are my constant, my confidante, and my favorite partner-in-crime. No matter how big we grow or how far we go, remember that your brother is always just one call away, standing right behind you to protect you and cheer you on."
+                    "You are my constant, my confidante, and my favorite partner-in-crime. Thank you for turning a chance meeting into our unbreakable bond. Remember that your brother is always just one call away, standing right behind you to protect you and cheer you on."
                   </p>
                   <p className="font-serif italic text-zinc-200">
-                    "Thank you for bringing so much color and joy into my life. Happy Birthday, my sweet sister! 💖"
+                    "Thank you for bringing so much color and joy into my life. Happy Birthday, my dearest Amma! 💖"
                   </p>
                   <p className="text-right font-serif text-lg font-bold text-biolum-purple italic pr-4">- Your Brother</p>
                 </div>

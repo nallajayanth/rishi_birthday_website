@@ -93,7 +93,7 @@ const getFamilyPhotoMetadata = (index: number): PhotoMetadata => {
   const fileNum = index + 1;
   switch (fileNum) {
     case 1:
-      return { relation: "Brother & Sister 🛡️", caption: "A perfect selfie with my favorite brother and protector.", tags: ["Brother", "Rishi", "Family"] };
+      return { relation: "Brother & Amma 🛡️", caption: "A perfect selfie with my favorite brother and protector.", tags: ["Brother", "Rishi", "Family"] };
     case 2:
       return { relation: "Mom's Pure Love 👩‍🍼", caption: "A warm and gentle embrace from Mom when I was just a little baby.", tags: ["Mom", "Rishi", "Childhood", "Family"] };
     case 3:
@@ -447,8 +447,8 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
       { pairId: 'pinni', label: "Playful Pinni 🤪", image: familyImageUrls[20] || fallbackImages[1] },
       { pairId: 'brother', label: 'Brother 🛡️', image: familyImageUrls[2] || fallbackImages[2] },
       { pairId: 'brother', label: 'Brother 🛡️', image: familyImageUrls[2] || fallbackImages[2] },
-      { pairId: 'sister', label: 'Sister (Rishi) ✨', image: familyImageUrls[4] || fallbackImages[3] },
-      { pairId: 'sister', label: 'Sister (Rishi) ✨', image: familyImageUrls[4] || fallbackImages[3] },
+      { pairId: 'sister', label: 'Sister ✨', image: familyImageUrls[4] || fallbackImages[3] },
+      { pairId: 'sister', label: 'Sister ✨', image: familyImageUrls[4] || fallbackImages[3] },
       { pairId: 'family', label: 'Family Together 🏡', image: familyImageUrls[15] || fallbackImages[4] },
       { pairId: 'family', label: 'Family Together 🏡', image: familyImageUrls[15] || fallbackImages[4] },
     ];
@@ -545,7 +545,7 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
     {
       title: "Chapter 1: The Circle of Warmth",
       quote: "Family is where life begins and love never ends.",
-      story: "Siri, you are the heartbeat of our family. Together, we have built a sanctuary of laughter, shared meals, and unwavering strength. No matter where we go, we are bound by a love that is unconditional and forever. You are our greatest strength.",
+      story: "Amma, you are the heartbeat of our family. Together, we have built a sanctuary of laughter, shared meals, and unwavering strength. No matter where we go, we are bound by a love that is unconditional and forever. You are our greatest strength.",
       image: familyImageUrls[15] || fallbackImages[4],
       themeColor: "from-pink-500/20 to-purple-500/20",
       icon: <Home size={20} className="text-pink-400 animate-pulse" />
@@ -569,7 +569,7 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
     {
       title: "Chapter 4: Sibling Love",
       quote: "We share a bond that time cannot erase, a sibling love filled with laughter and grace.",
-      story: "Siri, your loving brother is sending you his warmest wishes! He cherishes every childhood memory, every shared joke, and the beautiful, protective bond you share. He stands as your constant support, wishing you a year filled with grand successes, infinite smiles, and everything you have ever dreamed of. Happy Birthday to his favorite sister! 💖",
+      story: "Amma, your loving brother is sending you his warmest wishes! He cherishes every shared joke, every single study session, and the beautiful, protective bond you’ve built over these two years since you met at the institute. He stands as your constant support, wishing you a year filled with grand successes, infinite smiles, and everything you have ever dreamed of. Happy Birthday, my dearest Amma! 💖",
       image: familyImageUrls[0] || fallbackImages[2],
       themeColor: "from-amber-500/20 to-red-500/20",
       icon: <User size={20} className="text-amber-400 animate-pulse" />

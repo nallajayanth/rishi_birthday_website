@@ -74,19 +74,20 @@ export const LetterOfLove: React.FC<LetterOfLoveProps> = ({ onUnlock }) => {
             >
               {/* Gold wax seal watermark */}
               <div className="absolute top-6 right-8 font-serif italic text-4xl text-amber-300/15 pointer-events-none select-none">
-                Sis 🤍
+                Amma 🤍
               </div>
 
               {/* Letter Heading */}
               <h3 className="font-serif text-3xl italic font-medium tracking-wide text-amber-300 mb-8 border-b border-white/10 pb-4">
-                To My Sister,
+                To My Dearest Amma,
               </h3>
 
               {/* Letter Paragraph */}
               <p className="font-serif text-lg md:text-xl leading-relaxed text-zinc-200 tracking-wide text-justify italic mb-10 first-letter:text-4xl first-letter:font-bold first-letter:text-biolum-pink first-letter:float-left first-letter:mr-2">
-                "From our endless fights to your chaotic laughter, you have been the absolute brightness in my life. 
-                I might not always say it, but seeing you grow into such an amazing person makes me so incredibly proud. 
-                You mean the world to me, and today is all about celebrating you..."
+                "Two years ago, when our paths crossed at the institute, I had no idea that destiny was introducing me to my Sister. 
+                We didn’t share a childhood, but the bond we’ve built in these two years feels stronger than a lifetime. 
+                You became my Sister, my protector, and my guide not by birth, but by choice, and that is a choice I will cherish forever. 
+                Thank you for showing me that family isn't defined by blood, but by the love and support we give to each other. Happy Birthday, my dearest Amma..."
               </p>
 
               {/* Next Step Button */}
