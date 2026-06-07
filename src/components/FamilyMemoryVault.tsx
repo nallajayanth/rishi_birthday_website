@@ -234,7 +234,7 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
   const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
   const [activeTab, setActiveTab] = useState<'chapters' | 'album'>('chapters');
   const [direction, setDirection] = useState(0); // -1 for prev, 1 for next
-  const [showChapter5Prompt, setShowChapter5Prompt] = useState(false);
+  const [chapterRevealTargetIdx, setChapterRevealTargetIdx] = useState<number | null>(null);
   const [showMagicTransition, setShowMagicTransition] = useState(false);
   const [polaroidStack, setPolaroidStack] = useState<number[]>([0, 1, 2]);
   
@@ -247,20 +247,100 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
   const [floatingHearts, setFloatingHearts] = useState<{ id: number; x: number; y: number; size: number }[]>([]);
   
   // Evasion & PIN lock states
-  const [endButtonOffset, setEndButtonOffset] = useState({ x: 0, y: 0 });
+  const [mysteryButtonOffset, setMysteryButtonOffset] = useState({ x: 0, y: 0 });
   const [showPinPad, setShowPinPad] = useState(false);
   const [enteredPin, setEnteredPin] = useState('');
   const [pinError, setPinError] = useState(false);
 
-  const handleEndButtonEvasion = () => {
-    if (window.playUISfx) window.playUISfx('click');
+  const handleMysteryButtonEvasion = () => {
+    if (window.playUISfx) window.playUISfx('teleport');
     const rangeX = 140;
     const rangeY = 70;
     let nextX = (Math.random() - 0.5) * rangeX * 2;
     let nextY = (Math.random() - 0.5) * rangeY * 2;
-    if (Math.abs(nextX) < 40) nextX = nextX > 0 ? 60 : -60;
-    if (Math.abs(nextY) < 20) nextY = nextY > 0 ? 30 : -30;
-    setEndButtonOffset({ x: nextX, y: nextY });
+    if (Math.abs(nextX) < 45) nextX = nextX > 0 ? 65 : -65;
+    if (Math.abs(nextY) < 20) nextY = nextY > 0 ? 35 : -35;
+    setMysteryButtonOffset({ x: nextX, y: nextY });
+  };
+
+  const getMysteryConfig = (targetIdx: number) => {
+    switch (targetIdx) {
+      case 1: // Chapter 2
+        return {
+          question: "Who holds the key to the warmest hugs, gentlest guidance, and your silent shield? 👩‍🍼",
+          mainBtn: "Reveal the Blessing 🌹",
+          runawayBtn: "Skip Mom's love 🥺",
+          portalText: "Channelling Mom's infinite warmth... 💖",
+          cardClass: "border-rose-500/20 shadow-[0_0_30px_rgba(244,63,94,0.15)] bg-gradient-to-br from-zinc-950 via-zinc-900 to-rose-950/20",
+          btnClass: "from-rose-500 to-red-600 hover:shadow-[0_0_20px_rgba(244,63,94,0.4)]",
+          glowBgClass: "bg-rose-500/10",
+          icon: <Heart size={28} className="text-rose-400 fill-rose-400/20" />,
+          ringBorderClass: "border-rose-500/20",
+          portalGradient: "from-rose-500/10",
+          particleColorClass: "text-rose-500/40",
+          textClass: "text-rose-400"
+        };
+      case 2: // Chapter 3
+        return {
+          question: "Who is your ultimate partner in endless reverse-talk battles and Tom & Jerry fights? 🤪",
+          mainBtn: "Expose the Partner-in-Crime 🎭",
+          runawayBtn: "Keep the peace 🕊️",
+          portalText: "Preparing for Tom & Jerry battle... 🥊",
+          cardClass: "border-orange-500/20 shadow-[0_0_30px_rgba(249,115,22,0.15)] bg-gradient-to-br from-zinc-950 via-zinc-900 to-orange-950/20",
+          btnClass: "from-orange-500 to-red-500 hover:shadow-[0_0_20px_rgba(249,115,22,0.4)]",
+          glowBgClass: "bg-orange-500/10",
+          icon: <Star size={28} className="text-orange-400" />,
+          ringBorderClass: "border-orange-500/20",
+          portalGradient: "from-orange-500/10",
+          particleColorClass: "text-orange-500/40",
+          textClass: "text-orange-400"
+        };
+      case 3: // Chapter 4
+        return {
+          question: "Who is the favorite protector who fought with you all day but stands as your permanent shield? 🛡️",
+          mainBtn: "Reveal My Brother! ⚔️",
+          runawayBtn: "Fight him instead 🥊",
+          portalText: "Forging sibling bond connection... ✨",
+          cardClass: "border-amber-500/20 shadow-[0_0_30px_rgba(245,158,11,0.15)] bg-gradient-to-br from-zinc-950 via-zinc-900 to-amber-950/20",
+          btnClass: "from-amber-500 to-yellow-600 hover:shadow-[0_0_20px_rgba(245,158,11,0.4)]",
+          glowBgClass: "bg-amber-500/10",
+          icon: <User size={28} className="text-amber-400" />,
+          ringBorderClass: "border-amber-500/20",
+          portalGradient: "from-amber-500/10",
+          particleColorClass: "text-amber-500/40",
+          textClass: "text-amber-400"
+        };
+      case 4: // Chapter 5
+        return {
+          question: "Who is the absolute favorite person counting down the minutes to sleep holding your hand? 💖",
+          mainBtn: "Reveal Her Secret Letter! ✉️",
+          runawayBtn: "End the journey here 🔒",
+          portalText: "Decoding the secret letter... 🔐",
+          cardClass: "border-red-500/20 shadow-[0_0_30px_rgba(239,68,68,0.15)] bg-gradient-to-br from-zinc-950 via-zinc-900 to-red-950/20",
+          btnClass: "from-red-500 to-rose-600 hover:shadow-[0_0_20px_rgba(239,68,68,0.4)]",
+          glowBgClass: "bg-red-500/10",
+          icon: <Heart size={28} className="text-red-400 fill-red-400/20 animate-pulse" />,
+          ringBorderClass: "border-red-500/20",
+          portalGradient: "from-red-500/10",
+          particleColorClass: "text-red-500/40",
+          textClass: "text-red-400"
+        };
+      default:
+        return {
+          question: "Who is the next family member waiting to be revealed in the vault? 📸",
+          mainBtn: "Reveal Next Memory ✨",
+          runawayBtn: "Keep it locked 🔒",
+          portalText: "Opening the vault gates... 🔑",
+          cardClass: "border-violet-500/20 shadow-[0_0_30px_rgba(139,92,246,0.15)] bg-gradient-to-br from-zinc-950 via-zinc-900 to-violet-950/20",
+          btnClass: "from-violet-500 to-fuchsia-600 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]",
+          glowBgClass: "bg-violet-500/10",
+          icon: <Lock size={28} className="text-violet-400" />,
+          ringBorderClass: "border-violet-500/20",
+          portalGradient: "from-violet-500/10",
+          particleColorClass: "text-violet-500/40",
+          textClass: "text-violet-400"
+        };
+    }
   };
 
   const checkPin = (pin: string) => {
@@ -297,15 +377,17 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
     });
   };
 
-  const handleConfirmChapter5 = () => {
+  const handleConfirmChapterReveal = (targetIdx: number) => {
     if (window.playUISfx) window.playUISfx('teleport');
-    setShowChapter5Prompt(false);
     setShowMagicTransition(true);
 
     setTimeout(() => {
       if (window.playUISfx) window.playUISfx('success');
       setShowMagicTransition(false);
-      setCurrentChapterIdx(4); // Advance to Chapter 5
+      setDirection(1);
+      setCurrentChapterIdx(targetIdx);
+      setChapterRevealTargetIdx(null);
+      setMysteryButtonOffset({ x: 0, y: 0 });
     }, 2500);
   };
 
@@ -506,14 +588,11 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
 
   const handleNextChapter = () => {
     if (window.playUISfx) window.playUISfx('click');
-    if (currentChapterIdx === 3) {
-      // Intercept going to Chapter 5
-      setShowChapter5Prompt(true);
-    } else if (currentChapterIdx === chapters.length - 1) {
+    if (currentChapterIdx === chapters.length - 1) {
       setShowEndChoicePrompt(true);
     } else {
-      setDirection(1);
-      setCurrentChapterIdx((prev) => prev + 1);
+      setMysteryButtonOffset({ x: 0, y: 0 });
+      setChapterRevealTargetIdx(currentChapterIdx + 1);
     }
   };
 
@@ -945,44 +1024,84 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
                   </div>
                 ) : (
                   /* NORMAL GRID WITH CHAPTER STYLING */
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full px-2 select-none">
-                    {filteredFamilyImages.map((item, idx) => (
-                      <motion.div
-                        key={item.originalIndex}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: (idx % 12) * 0.04 }}
-                        whileHover={{ scale: 1.03, rotateY: 8, rotateX: -4 }}
-                        style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
-                        onClick={() => {
-                          if (window.playUISfx) window.playUISfx('click');
-                          setLightboxIdx(idx);
-                        }}
-                        className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/15 shadow-xl cursor-pointer bg-zinc-900 group transition-all duration-300"
-                      >
-                        <img
-                          src={item.url}
-                          alt={item.metadata.caption}
-                          className="w-full h-full object-cover filter brightness-95 transition-transform duration-500 group-hover:scale-102"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent flex flex-col justify-end p-4">
-                          <span className="text-[9px] font-mono text-amber-300 uppercase tracking-widest block font-bold mb-1">
-                            {item.metadata.relation}
-                          </span>
-                          <h5 className="font-serif italic text-white text-xs leading-tight block group-hover:text-amber-200 transition-colors">
-                            {item.metadata.caption}
-                          </h5>
-                          <div className="flex flex-wrap gap-1 mt-2 opacity-80">
-                            {item.metadata.tags.slice(0, 2).map((t) => (
-                              <span key={t} className="text-[7px] font-mono bg-white/5 border border-white/10 text-zinc-400 px-1.5 py-0.2 rounded uppercase">
-                                {t}
-                              </span>
-                            ))}
+                  <>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full px-2 select-none">
+                      {filteredFamilyImages.map((item, idx) => (
+                        <motion.div
+                          key={item.originalIndex}
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: (idx % 12) * 0.04 }}
+                          whileHover={{ scale: 1.03, rotateY: 8, rotateX: -4 }}
+                          style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
+                          onClick={() => {
+                            if (window.playUISfx) window.playUISfx('click');
+                            setLightboxIdx(idx);
+                          }}
+                          className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/15 shadow-xl cursor-pointer bg-zinc-900 group transition-all duration-300"
+                        >
+                          <img
+                            src={item.url}
+                            alt={item.metadata.caption}
+                            className="w-full h-full object-cover filter brightness-95 transition-transform duration-500 group-hover:scale-102"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent flex flex-col justify-end p-4">
+                            <span className="text-[9px] font-mono text-amber-300 uppercase tracking-widest block font-bold mb-1">
+                              {item.metadata.relation}
+                            </span>
+                            <h5 className="font-serif italic text-white text-xs leading-tight block group-hover:text-amber-200 transition-colors">
+                              {item.metadata.caption}
+                            </h5>
+                            <div className="flex flex-wrap gap-1 mt-2 opacity-80">
+                              {item.metadata.tags.slice(0, 2).map((t) => (
+                                <span key={t} className="text-[7px] font-mono bg-white/5 border border-white/10 text-zinc-400 px-1.5 py-0.2 rounded uppercase">
+                                  {t}
+                                </span>
+                              ))}
+                            </div>
                           </div>
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Bottom of the Album CTA */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8 }}
+                      className="w-full max-w-xl mx-auto text-center p-8 mt-12 rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-500/5 via-zinc-950/40 to-purple-500/5 shadow-[0_0_25px_rgba(252,211,77,0.06)] relative overflow-hidden select-none"
+                    >
+                      {/* Ambient glow */}
+                      <div className="absolute -inset-px bg-gradient-to-tr from-amber-500/10 via-transparent to-purple-500/10 opacity-30 pointer-events-none" />
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+                      
+                      <div className="relative z-10 space-y-4">
+                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border border-amber-500/30 bg-amber-500/10 shadow-[0_0_15px_rgba(252,211,77,0.15)] animate-pulse">
+                          <Heart size={20} className="text-amber-400 fill-amber-400/20 animate-pulse" />
                         </div>
-                      </motion.div>
-                    ))}
-                  </div>
+                        <div className="space-y-1.5">
+                          <h4 className="font-serif italic text-xl text-amber-200">
+                            The Journey of Memories is Complete... ❤️
+                          </h4>
+                          <p className="font-sans text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed">
+                            You've seen all the precious moments of our family. Now, there is one last surprise waiting for you.
+                          </p>
+                        </div>
+                        
+                        <button
+                          onClick={() => {
+                            if (window.playUISfx) window.playUISfx('win');
+                            setShowCelebration(true);
+                          }}
+                          className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-300 via-amber-400 to-rose-400 hover:shadow-[0_0_25px_rgba(252,211,77,0.4)] text-zinc-950 font-extrabold rounded-full cursor-pointer text-xs font-mono tracking-widest uppercase transition-all duration-300 active:scale-95 border border-white/20"
+                        >
+                          <Sparkles size={14} className="animate-spin" />
+                          Open Brother's Ending Message 💖
+                        </button>
+                      </div>
+                    </motion.div>
+                  </>
                 )}
               </motion.div>
             )}
@@ -1195,59 +1314,74 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
 
       </div>
 
-      {/* Chapter 5 Confirmation Prompt */}
+      {/* Suspense Mystery Chapter Reveal Prompt */}
       <AnimatePresence>
-        {showChapter5Prompt && (
+        {chapterRevealTargetIdx !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+            className="fixed inset-0 z-45 bg-black/90 backdrop-blur-lg flex items-center justify-center p-4"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="w-full max-w-md glass-panel p-8 rounded-3xl border border-rose-500/20 shadow-[0_0_30px_rgba(244,63,94,0.15)] bg-gradient-to-br from-zinc-950 via-zinc-900 to-rose-950/20 text-center space-y-6 relative overflow-hidden"
-            >
-              <div className="absolute -top-10 -left-10 w-32 h-32 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
-              <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
-              
-              <div className="mx-auto w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center shadow-[0_0_20px_rgba(244,63,94,0.25)] animate-pulse">
-                <Heart size={28} className="text-rose-400 fill-rose-400/20" />
-              </div>
-
-              <div className="space-y-3">
-                <h3 className="font-serif italic text-2xl text-rose-200">
-                  Shall we end up here...
-                </h3>
-                <p className="font-sans text-sm text-zinc-400 leading-relaxed">
-                  Or shall we see Chapter 5?
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-3 pt-2">
-                <button
-                  onClick={handleConfirmChapter5}
-                  className="w-full py-3 bg-gradient-to-r from-rose-500 to-red-600 text-white font-semibold rounded-xl cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(244,63,94,0.4)] transition-all duration-300 active:scale-95 text-xs font-mono tracking-wider uppercase flex items-center justify-center gap-1.5"
+            {(() => {
+              const config = getMysteryConfig(chapterRevealTargetIdx);
+              return (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                  className={`w-full max-w-md glass-panel p-8 rounded-3xl border text-center space-y-6 relative overflow-hidden ${config.cardClass}`}
                 >
-                  <Sparkles size={14} className="animate-spin" />
-                  Unlock Chapter 5 (Her Heart)
-                </button>
-                
-                <motion.button
-                  animate={{ x: endButtonOffset.x, y: endButtonOffset.y }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                  onMouseEnter={handleEndButtonEvasion}
-                  onTouchStart={handleEndButtonEvasion}
-                  onClick={handleEndButtonEvasion}
-                  className="w-full py-3 border border-white/10 rounded-xl font-mono text-[11px] uppercase tracking-wider text-zinc-400 hover:border-white/20 hover:text-white cursor-pointer transition-all select-none"
-                >
-                  End Here & Celebrate
-                </motion.button>
-              </div>
-            </motion.div>
+                  {/* Glowing background highlights */}
+                  <div className={`absolute -top-10 -left-10 w-32 h-32 rounded-full blur-2xl pointer-events-none ${config.glowBgClass}`} />
+                  <div className={`absolute -bottom-10 -right-10 w-32 h-32 rounded-full blur-2xl pointer-events-none ${config.glowBgClass}`} />
+                  
+                  {/* Floating particles icon */}
+                  <div className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center border animate-pulse ${config.glowBgClass} ${config.cardClass.split(' ')[0]}`}>
+                    {config.icon}
+                  </div>
+
+                  <div className="space-y-3">
+                    <span className="font-mono text-[10px] tracking-[0.25em] text-zinc-500 uppercase font-semibold">
+                      Chapter {chapterRevealTargetIdx + 1} Locked 🔒
+                    </span>
+                    <h3 className="font-serif italic text-2xl text-white leading-normal">
+                      Who is coming next? 🤔
+                    </h3>
+                    <p className="font-sans text-sm text-zinc-300 leading-relaxed px-2">
+                      {config.question}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col gap-3 pt-2">
+                    {/* Main Reveal Button */}
+                    <button
+                      onClick={() => handleConfirmChapterReveal(chapterRevealTargetIdx)}
+                      className={`w-full py-3.5 bg-gradient-to-r text-white font-bold rounded-xl cursor-pointer shadow-lg transition-all duration-300 active:scale-95 text-xs font-mono tracking-widest uppercase flex items-center justify-center gap-1.5 ${config.btnClass}`}
+                    >
+                      <Sparkles size={14} className="animate-spin" />
+                      {config.mainBtn}
+                    </button>
+                    
+                    {/* Runaway Button */}
+                    <motion.button
+                      animate={{ x: mysteryButtonOffset.x, y: mysteryButtonOffset.y }}
+                      transition={{ type: 'spring', stiffness: 350, damping: 18 }}
+                      onMouseEnter={handleMysteryButtonEvasion}
+                      onTouchStart={(e) => {
+                        e.preventDefault();
+                        handleMysteryButtonEvasion();
+                      }}
+                      onClick={handleMysteryButtonEvasion}
+                      className="w-full py-3 border border-white/10 rounded-xl font-mono text-[10px] uppercase tracking-widest text-zinc-400 hover:border-white/20 hover:text-white cursor-pointer transition-all select-none"
+                    >
+                      {config.runawayBtn}
+                    </motion.button>
+                  </div>
+                </motion.div>
+              );
+            })()}
           </motion.div>
         )}
       </AnimatePresence>
@@ -1329,103 +1463,109 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
       {/* Magic Portal Transition */}
       <AnimatePresence>
         {showMagicTransition && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center overflow-hidden pointer-events-auto"
-          >
-            <div className="absolute inset-0 z-0 flex items-center justify-center">
-              {[1, 2, 3, 4, 5].map((ring) => (
-                <motion.div
-                  key={ring}
-                  className="absolute rounded-full border border-rose-500/20"
-                  initial={{ width: 10, height: 10, opacity: 0, rotate: 0 }}
-                  animate={{
-                    width: [10, 1000],
-                    height: [10, 1000],
-                    opacity: [0, 0.8, 0],
-                    rotate: ring % 2 === 0 ? [0, 360] : [360, 0],
-                  }}
-                  transition={{
-                    duration: 2.2,
-                    repeat: Infinity,
-                    delay: ring * 0.4,
-                    ease: 'easeOut',
-                  }}
-                />
-              ))}
-              <div className="absolute w-full h-full bg-gradient-radial from-rose-500/10 via-transparent to-transparent opacity-60" />
-            </div>
+          (() => {
+            const targetIdx = chapterRevealTargetIdx !== null ? chapterRevealTargetIdx : 4;
+            const config = getMysteryConfig(targetIdx);
+            return (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center overflow-hidden pointer-events-auto"
+              >
+                <div className="absolute inset-0 z-0 flex items-center justify-center">
+                  {[1, 2, 3, 4, 5].map((ring) => (
+                    <motion.div
+                      key={ring}
+                      className={`absolute rounded-full border ${config.ringBorderClass}`}
+                      initial={{ width: 10, height: 10, opacity: 0, rotate: 0 }}
+                      animate={{
+                        width: [10, 1000],
+                        height: [10, 1000],
+                        opacity: [0, 0.8, 0],
+                        rotate: ring % 2 === 0 ? [0, 360] : [360, 0],
+                      }}
+                      transition={{
+                        duration: 2.2,
+                        repeat: Infinity,
+                        delay: ring * 0.4,
+                        ease: 'easeOut',
+                      }}
+                    />
+                  ))}
+                  <div className={`absolute w-full h-full bg-gradient-radial ${config.portalGradient} via-transparent to-transparent opacity-60`} />
+                </div>
 
-            <div className="absolute inset-0 z-10 pointer-events-none">
-              {Array.from({ length: 25 }).map((_, i) => {
-                const startX = Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 800);
-                const endX = startX + (Math.random() - 0.5) * 300;
-                return (
+                <div className="absolute inset-0 z-10 pointer-events-none">
+                  {Array.from({ length: 25 }).map((_, i) => {
+                    const startX = Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 800);
+                    const endX = startX + (Math.random() - 0.5) * 300;
+                    return (
+                      <motion.div
+                        key={i}
+                        className={`absolute ${config.particleColorClass}`}
+                        initial={{
+                          x: startX,
+                          y: (typeof window !== 'undefined' ? window.innerHeight : 800) + 50,
+                          scale: Math.random() * 0.5 + 0.5,
+                          opacity: 0,
+                        }}
+                        animate={{
+                          y: -100,
+                          x: endX,
+                          opacity: [0, 0.7, 0],
+                          rotate: Math.random() * 360,
+                        }}
+                        transition={{
+                          duration: Math.random() * 2 + 1.5,
+                          repeat: Infinity,
+                          delay: Math.random() * 1.5,
+                          ease: 'easeOut',
+                        }}
+                      >
+                        <Heart size={24} className="fill-current" />
+                      </motion.div>
+                    );
+                  })}
+                </div>
+
+                <div className="relative z-20 text-center space-y-6 px-4">
                   <motion.div
-                    key={i}
-                    className="absolute text-rose-500/40"
-                    initial={{
-                      x: startX,
-                      y: (typeof window !== 'undefined' ? window.innerHeight : 800) + 50,
-                      scale: Math.random() * 0.5 + 0.5,
-                      opacity: 0,
-                    }}
                     animate={{
-                      y: -100,
-                      x: endX,
-                      opacity: [0, 0.7, 0],
-                      rotate: Math.random() * 360,
+                      rotateY: 360,
+                      scale: [0.8, 1.2, 1],
                     }}
                     transition={{
-                      duration: Math.random() * 2 + 1.5,
-                      repeat: Infinity,
-                      delay: Math.random() * 1.5,
-                      ease: 'easeOut',
+                      rotateY: { duration: 2.5, repeat: Infinity, ease: 'linear' },
+                      scale: { duration: 1.5, ease: 'easeInOut' },
                     }}
+                    className={`mx-auto w-24 h-24 rounded-full bg-gradient-to-tr flex items-center justify-center border shadow-2xl ${config.glowBgClass} ${config.btnClass}`}
                   >
-                    <Heart size={24} className="fill-current" />
+                    {config.icon}
                   </motion.div>
-                );
-              })}
-            </div>
 
-            <div className="relative z-20 text-center space-y-6 px-4">
-              <motion.div
-                animate={{
-                  rotateY: 360,
-                  scale: [0.8, 1.2, 1],
-                }}
-                transition={{
-                  rotateY: { duration: 2.5, repeat: Infinity, ease: 'linear' },
-                  scale: { duration: 1.5, ease: 'easeInOut' },
-                }}
-                className="mx-auto w-24 h-24 rounded-full bg-gradient-to-tr from-rose-500 via-pink-500 to-purple-600 flex items-center justify-center shadow-[0_0_50px_rgba(244,63,94,0.5)] border border-rose-400"
-              >
-                <Sparkles size={40} className="text-white animate-pulse" />
+                  <div className="space-y-2">
+                    <motion.h2
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="font-serif italic text-3xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 via-amber-200 to-zinc-100 font-extrabold tracking-wide drop-shadow glow-gold"
+                    >
+                      Unlocking Chapter {targetIdx + 1}...
+                    </motion.h2>
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.6 }}
+                      className={`font-mono text-[10px] tracking-[0.25em] uppercase font-semibold animate-pulse ${config.textClass}`}
+                    >
+                      {config.portalText}
+                    </motion.p>
+                  </div>
+                </div>
               </motion.div>
-
-              <div className="space-y-2">
-                <motion.h2
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="font-serif italic text-3xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-rose-300 via-pink-200 to-rose-300 font-extrabold tracking-wide drop-shadow glow-pink"
-                >
-                  Unlocking Chapter 5...
-                </motion.h2>
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 }}
-                  className="font-mono text-[10px] tracking-[0.25em] text-rose-400 uppercase font-semibold animate-pulse"
-                >
-                  Connecting to Her Heart's Frequency 💖
-                </motion.p>
-              </div>
-            </div>
-          </motion.div>
+            )
+          })()
         )}
       </AnimatePresence>
 
@@ -1527,6 +1667,24 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
                         </span>
                       ))}
                     </div>
+
+                    {/* Sibling Ending Trigger for Slideshow End */}
+                    {lightboxIdx === filteredFamilyImages.length - 1 && (
+                      <motion.button
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.2 }}
+                        onClick={() => {
+                          if (window.playUISfx) window.playUISfx('win');
+                          setLightboxIdx(null); // Close lightbox
+                          setShowCelebration(true); // Show Sibling Ending
+                        }}
+                        className="mt-4 px-6 py-2.5 bg-gradient-to-r from-amber-300 via-amber-400 to-rose-400 hover:shadow-[0_0_15px_rgba(252,211,77,0.35)] text-zinc-950 font-bold rounded-xl cursor-pointer text-xs font-mono tracking-widest uppercase transition-all duration-300 active:scale-95 border border-white/10 flex items-center justify-center gap-1.5 mx-auto"
+                      >
+                        <Sparkles size={12} className="animate-pulse" />
+                        Open Brother's Ending Message 💖
+                      </motion.button>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
