@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
-import { Lock, Unlock, Eye, X, HelpCircle, Trophy, ArrowLeft, ArrowRight, Search } from 'lucide-react';
+import { Lock, Unlock, Eye, X, HelpCircle, Trophy, ArrowLeft, ArrowRight, Search, Sparkles, Play, Pause } from 'lucide-react';
 
 interface MemoryGridProps {
   onAllMatched: () => void;
@@ -651,6 +651,69 @@ const ThreeDCard: React.FC<ThreeDCardProps> = ({ children, className = '', onCli
   );
 };
 
+const chapterThemeConfig = {
+  solo: {
+    title: 'Solo Portraits Chapter',
+    emoji: '✨👸',
+    colorClass: 'text-biolum-pink',
+    gradientClass: 'from-biolum-pink to-pink-500',
+    shadowClass: 'shadow-[0_0_50px_rgba(255,42,133,0.3)]',
+    borderClass: 'border-biolum-pink/40',
+    bgGlow: 'bg-biolum-pink/10',
+    message: "Rishi, you look absolutely gorgeous in these portraits! Ready to open your personal runway? 💖",
+  },
+  heart: {
+    title: 'My Heart Chapter',
+    emoji: '💖👭',
+    colorClass: 'text-red-500',
+    gradientClass: 'from-red-500 to-rose-600',
+    shadowClass: 'shadow-[0_0_50px_rgba(239,68,68,0.3)]',
+    borderClass: 'border-red-500/40',
+    bgGlow: 'bg-red-500/10',
+    message: "These are the pictures closest to your heart. Ready to unlock this box of love? 💕",
+  },
+  gossip: {
+    title: 'Gossip Partner Chapter',
+    emoji: '💬☕',
+    colorClass: 'text-teal-400',
+    gradientClass: 'from-teal-400 to-emerald-500',
+    shadowClass: 'shadow-[0_0_50px_rgba(45,212,191,0.3)]',
+    borderClass: 'border-teal-400/40',
+    bgGlow: 'bg-teal-400/10',
+    message: "Who spilled the tea? Relive all the fun, laughs, and secret chit-chats! 🗣️✨",
+  },
+  friend: {
+    title: 'Best Friends Chapter',
+    emoji: '🤍🤞',
+    colorClass: 'text-amber-300',
+    gradientClass: 'from-amber-300 to-yellow-500',
+    shadowClass: 'shadow-[0_0_50px_rgba(252,211,77,0.3)]',
+    borderClass: 'border-amber-300/40',
+    bgGlow: 'bg-amber-300/10',
+    message: "Side by side or miles apart, best friends are always close to the heart. Ready? 🌟",
+  },
+  sibling: {
+    title: 'Sibling Chapter',
+    emoji: '👫✨',
+    colorClass: 'text-biolum-purple',
+    gradientClass: 'from-biolum-purple to-purple-600',
+    shadowClass: 'shadow-[0_0_50px_rgba(189,0,255,0.3)]',
+    borderClass: 'border-biolum-purple/40',
+    bgGlow: 'bg-biolum-purple/10',
+    message: "All the silly teasing, caring moments, and unbreakable sibling bonds. Open it, sis! 💜",
+  },
+  group: {
+    title: 'Squad & Duos Chapter',
+    emoji: '📸🎉',
+    colorClass: 'text-purple-400',
+    gradientClass: 'from-purple-400 to-indigo-500',
+    shadowClass: 'shadow-[0_0_50px_rgba(168,85,247,0.3)]',
+    borderClass: 'border-purple-400/40',
+    bgGlow: 'bg-purple-400/10',
+    message: "The absolute best gang and chaotic duo adventures! Ready to jump in? 🚀",
+  }
+};
+
 export const MemoryGrid: React.FC<MemoryGridProps> = ({
   onAllMatched,
   persistCards,
@@ -666,6 +729,11 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
   const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
   const matchesCount = persistMatches;
   const setMatchesCount = setPersistMatches;
+
+  // Unlock / Game Flow States
+  const [unlockedChapterPrompt, setUnlockedChapterPrompt] = useState<'solo' | 'heart' | 'gossip' | 'friend' | 'sibling' | 'group' | null>(null);
+  const [showContinuePrompt, setShowContinuePrompt] = useState<boolean>(false);
+  const [isAutoplay, setIsAutoplay] = useState<boolean>(true);
   
   // Unified Lightbox State
   const [lightbox, setLightbox] = useState<{ images: string[]; index: number; captions: string[] } | null>(null);
@@ -800,6 +868,9 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
     const allMatched = categoryCards.every(c => c.isMatched);
 
     if (allMatched) {
+      const nextUnlocked = { ...unlockedGalleries, [category]: true };
+      const isLast = nextUnlocked.solo && nextUnlocked.heart && nextUnlocked.gossip && nextUnlocked.friend && nextUnlocked.sibling && nextUnlocked.group;
+
       setUnlockedGalleries(prev => {
         const next = { ...prev, [category]: true };
         
@@ -812,7 +883,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
         }
 
         // Check if all galleries are now unlocked
-        if (next.solo && next.heart && next.gossip && next.friend && next.sibling && next.group) {
+        if (isLast) {
           setTimeout(() => {
             if (window.playUISfx) window.playUISfx('win');
             onAllMatched();
@@ -821,7 +892,68 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
 
         return next;
       });
+
+      // After a short delay:
+      setTimeout(() => {
+        if (isLast) {
+          // If this is the last card/chapter, automatically open it (no modal pop up)
+          handleOpenChapter(category);
+        } else {
+          // Scroll to the unlocked chapter card and trigger the prompt modal
+          const element = document.getElementById(`chapter-card-${category}`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          setUnlockedChapterPrompt(category);
+        }
+      }, 1200);
     }
+  };
+
+  const handleOpenChapter = (category: 'solo' | 'heart' | 'gossip' | 'friend' | 'sibling' | 'group') => {
+    if (window.playUISfx) window.playUISfx('success');
+    
+    // Expand the corresponding gallery
+    if (category === 'solo') setIsSoloExpanded(true);
+    else if (category === 'heart') setIsHeartExpanded(true);
+    else if (category === 'gossip') setIsGossipExpanded(true);
+    else if (category === 'friend') setIsFriendExpanded(true);
+    else if (category === 'sibling') setIsSiblingExpanded(true);
+    else if (category === 'group') setIsGroupExpanded(true);
+
+    // Clear unlocked chapter prompt
+    setUnlockedChapterPrompt(null);
+
+    // Scroll smoothly to the expanded gallery section instead of opening the lightbox
+    setTimeout(() => {
+      const element = document.getElementById(`${category}-expanded-section`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 300);
+  };
+
+  const closeLightbox = () => {
+    if (window.playUISfx) window.playUISfx('click');
+    setLightbox(null);
+  };
+
+  const handleContinueGame = () => {
+    if (window.playUISfx) window.playUISfx('click');
+    setShowContinuePrompt(false);
+    
+    // Scroll smoothly back to the top game matching grid
+    setTimeout(() => {
+      const gridElement = document.getElementById('memory-game-grid');
+      if (gridElement) {
+        gridElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 300);
+  };
+
+  const handleStayOnGallery = () => {
+    if (window.playUISfx) window.playUISfx('click');
+    setShowContinuePrompt(false);
   };
 
   // Keyboard navigation for lightbox
@@ -843,16 +975,33 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
           return { ...prev, index: (prev.index + 1) % prev.images.length };
         });
       } else if (e.key === 'Escape') {
-        setLightbox(null);
+        closeLightbox();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [lightbox]);
 
+  // Slideshow Autoplay for Lightbox
+  useEffect(() => {
+    if (!lightbox || !isAutoplay) return;
+
+    const interval = setInterval(() => {
+      setSlideDirection(1);
+      setLightbox(prev => {
+        if (!prev) return null;
+        const nextIndex = (prev.index + 1) % prev.images.length;
+        return { ...prev, index: nextIndex };
+      });
+    }, 3000); // Auto-advance every 3 seconds
+
+    return () => clearInterval(interval);
+  }, [lightbox?.index, isAutoplay]);
+
   const openLightbox = (imagesList: string[], idx: number, captionsList: string[]) => {
     if (window.playUISfx) window.playUISfx('click');
     setSlideDirection(0);
+    setIsAutoplay(true); // Autoplay by default when opened
     setLightbox({
       images: imagesList,
       index: idx,
@@ -974,7 +1123,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
       </motion.div>
 
       {/* GAME GRID */}
-      <div className="grid grid-cols-4 sm:grid-cols-8 gap-4 md:gap-6 max-w-5xl w-full mb-20">
+      <div id="memory-game-grid" className="grid grid-cols-4 sm:grid-cols-8 gap-4 md:gap-6 max-w-5xl w-full mb-20">
         {cards.map((card, idx) => (
           <div
             key={card.id}
@@ -1075,7 +1224,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl mb-12">
         
         {/* CHAPTER 1: SOLO GALLERY */}
-        <div className="relative">
+        <div id="chapter-card-solo" className="relative">
           <AnimatePresence>
             {!unlockedGalleries.solo && (
               <motion.div
@@ -1152,7 +1301,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
         </div>
 
         {/* CHAPTER 2: MY HEART GALLERY */}
-        <div className="relative">
+        <div id="chapter-card-heart" className="relative">
           <AnimatePresence>
             {!unlockedGalleries.heart && (
               <motion.div
@@ -1227,7 +1376,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
         </div>
 
         {/* CHAPTER 3: GOSSIP PARTNER GALLERY */}
-        <div className="relative">
+        <div id="chapter-card-gossip" className="relative">
           <AnimatePresence>
             {!unlockedGalleries.gossip && (
               <motion.div
@@ -1302,7 +1451,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
         </div>
 
         {/* CHAPTER 4: FRIENDS GALLERY */}
-        <div className="relative">
+        <div id="chapter-card-friend" className="relative">
           <AnimatePresence>
             {!unlockedGalleries.friend && (
               <motion.div
@@ -1377,7 +1526,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
         </div>
 
         {/* CHAPTER 5: BROTHER & SISTER */}
-        <div className="relative">
+        <div id="chapter-card-sibling" className="relative">
           <AnimatePresence>
             {!unlockedGalleries.sibling && (
               <motion.div
@@ -1452,7 +1601,7 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
         </div>
 
         {/* CHAPTER 6: SQUAD & DUOS GALLERY */}
-        <div className="relative">
+        <div id="chapter-card-group" className="relative">
           <AnimatePresence>
             {!unlockedGalleries.group && (
               <motion.div
@@ -1626,6 +1775,19 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
                   })}
                 </motion.div>
               )}
+              {matchesCount < 8 && (
+                <div className="flex justify-center mt-12 mb-4">
+                  <button
+                    onClick={() => {
+                      if (window.playUISfx) window.playUISfx('click');
+                      setShowContinuePrompt(true);
+                    }}
+                    className="px-8 py-3.5 rounded-full bg-gradient-to-r from-biolum-pink to-biolum-purple hover:shadow-[0_0_20px_rgba(255,42,133,0.3)] text-white font-bold text-xs tracking-wider uppercase border border-white/10 cursor-pointer active:scale-95 duration-200 flex items-center gap-2"
+                  >
+                    <span>Done Browsing? Return to Memory Vault 🧩</span>
+                  </button>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -1728,6 +1890,19 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
                     );
                   })}
                 </motion.div>
+              )}
+              {matchesCount < 8 && (
+                <div className="flex justify-center mt-12 mb-4">
+                  <button
+                    onClick={() => {
+                      if (window.playUISfx) window.playUISfx('click');
+                      setShowContinuePrompt(true);
+                    }}
+                    className="px-8 py-3.5 rounded-full bg-gradient-to-r from-biolum-pink to-biolum-purple hover:shadow-[0_0_20px_rgba(255,42,133,0.3)] text-white font-bold text-xs tracking-wider uppercase border border-white/10 cursor-pointer active:scale-95 duration-200 flex items-center gap-2"
+                  >
+                    <span>Done Browsing? Return to Memory Vault 🧩</span>
+                  </button>
+                </div>
               )}
             </motion.div>
           )}
@@ -1832,6 +2007,19 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
                   })}
                 </motion.div>
               )}
+              {matchesCount < 8 && (
+                <div className="flex justify-center mt-12 mb-4">
+                  <button
+                    onClick={() => {
+                      if (window.playUISfx) window.playUISfx('click');
+                      setShowContinuePrompt(true);
+                    }}
+                    className="px-8 py-3.5 rounded-full bg-gradient-to-r from-biolum-pink to-biolum-purple hover:shadow-[0_0_20px_rgba(255,42,133,0.3)] text-white font-bold text-xs tracking-wider uppercase border border-white/10 cursor-pointer active:scale-95 duration-200 flex items-center gap-2"
+                  >
+                    <span>Done Browsing? Return to Memory Vault 🧩</span>
+                  </button>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -1934,6 +2122,19 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
                     );
                   })}
                 </motion.div>
+              )}
+              {matchesCount < 8 && (
+                <div className="flex justify-center mt-12 mb-4">
+                  <button
+                    onClick={() => {
+                      if (window.playUISfx) window.playUISfx('click');
+                      setShowContinuePrompt(true);
+                    }}
+                    className="px-8 py-3.5 rounded-full bg-gradient-to-r from-biolum-pink to-biolum-purple hover:shadow-[0_0_20px_rgba(255,42,133,0.3)] text-white font-bold text-xs tracking-wider uppercase border border-white/10 cursor-pointer active:scale-95 duration-200 flex items-center gap-2"
+                  >
+                    <span>Done Browsing? Return to Memory Vault 🧩</span>
+                  </button>
+                </div>
               )}
             </motion.div>
           )}
@@ -2087,6 +2288,19 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
                   })}
                 </div>
               )}
+              {matchesCount < 8 && (
+                <div className="flex justify-center mt-12 mb-4">
+                  <button
+                    onClick={() => {
+                      if (window.playUISfx) window.playUISfx('click');
+                      setShowContinuePrompt(true);
+                    }}
+                    className="px-8 py-3.5 rounded-full bg-gradient-to-r from-biolum-pink to-biolum-purple hover:shadow-[0_0_20px_rgba(255,42,133,0.3)] text-white font-bold text-xs tracking-wider uppercase border border-white/10 cursor-pointer active:scale-95 duration-200 flex items-center gap-2"
+                  >
+                    <span>Done Browsing? Return to Memory Vault 🧩</span>
+                  </button>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -2190,6 +2404,19 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
                   })}
                 </motion.div>
               )}
+              {matchesCount < 8 && (
+                <div className="flex justify-center mt-12 mb-4">
+                  <button
+                    onClick={() => {
+                      if (window.playUISfx) window.playUISfx('click');
+                      setShowContinuePrompt(true);
+                    }}
+                    className="px-8 py-3.5 rounded-full bg-gradient-to-r from-biolum-pink to-biolum-purple hover:shadow-[0_0_20px_rgba(255,42,133,0.3)] text-white font-bold text-xs tracking-wider uppercase border border-white/10 cursor-pointer active:scale-95 duration-200 flex items-center gap-2"
+                  >
+                    <span>Done Browsing? Return to Memory Vault 🧩</span>
+                  </button>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -2203,14 +2430,28 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4"
-            onClick={() => {
-              if (window.playUISfx) window.playUISfx('click');
-              setLightbox(null);
-            }}
+            onClick={closeLightbox}
           >
+            {/* Play/Pause Autoplay Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (window.playUISfx) window.playUISfx('click');
+                setIsAutoplay(prev => !prev);
+              }}
+              className={`absolute top-6 right-20 w-11 h-11 rounded-full border flex items-center justify-center cursor-pointer active:scale-95 duration-100 z-50 ${
+                isAutoplay 
+                  ? 'bg-biolum-pink/20 border-biolum-pink text-biolum-pink shadow-[0_0_12px_rgba(255,42,133,0.3)]' 
+                  : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+              }`}
+              title={isAutoplay ? "Pause Slideshow" : "Start Slideshow"}
+            >
+              {isAutoplay ? <Pause size={18} /> : <Play size={18} />}
+            </button>
+
             {/* Close Button */}
             <button
-              onClick={() => setLightbox(null)}
+              onClick={closeLightbox}
               className="absolute top-6 right-6 w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white cursor-pointer hover:bg-white/10 active:scale-95 duration-100 z-50"
             >
               <X size={20} />
@@ -2286,6 +2527,139 @@ export const MemoryGrid: React.FC<MemoryGridProps> = ({
                 <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-400 text-xs font-mono">
                   {lightbox.index + 1} of {lightbox.images.length}
                 </span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 1. CUSTOM UNLOCKED CHAPTER PROMPT MODAL */}
+      <AnimatePresence>
+        {unlockedChapterPrompt && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 30, rotate: -2 }}
+              animate={{ scale: 1, y: 0, rotate: 0 }}
+              exit={{ scale: 0.9, y: 30, rotate: 2 }}
+              transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+              className={`relative w-full max-w-lg rounded-3xl p-8 border ${chapterThemeConfig[unlockedChapterPrompt].borderClass} bg-zinc-950/90 ${chapterThemeConfig[unlockedChapterPrompt].shadowClass} text-center overflow-hidden`}
+            >
+              {/* Glowing Background Light Spot */}
+              <div className={`absolute -top-20 -left-20 w-48 h-48 rounded-full blur-[80px] pointer-events-none ${chapterThemeConfig[unlockedChapterPrompt].bgGlow}`} />
+              <div className={`absolute -bottom-20 -right-20 w-48 h-48 rounded-full blur-[80px] pointer-events-none ${chapterThemeConfig[unlockedChapterPrompt].bgGlow}`} />
+
+              {/* Animated Floating Sparkles */}
+              <div className="absolute inset-0 pointer-events-none opacity-40">
+                <div className="absolute top-10 left-10 animate-bounce delay-100"><Sparkles size={16} className={chapterThemeConfig[unlockedChapterPrompt].colorClass} /></div>
+                <div className="absolute bottom-10 right-10 animate-bounce delay-300"><Sparkles size={14} className={chapterThemeConfig[unlockedChapterPrompt].colorClass} /></div>
+                <div className="absolute top-1/2 right-12 animate-pulse"><Sparkles size={18} className={chapterThemeConfig[unlockedChapterPrompt].colorClass} /></div>
+              </div>
+
+              {/* Celebration Icon Container */}
+              <motion.div
+                animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
+                transition={{ repeat: Infinity, duration: 3 }}
+                className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center border ${chapterThemeConfig[unlockedChapterPrompt].borderClass} bg-white/5 mb-6`}
+              >
+                <span className="text-4xl">{chapterThemeConfig[unlockedChapterPrompt].emoji}</span>
+              </motion.div>
+
+              {/* Sparkle Heading */}
+              <h3 className="font-serif text-2xl md:text-3xl font-extrabold text-white mb-2 leading-tight">
+                Woohoo! Chapter Unlocked! 🎉
+              </h3>
+              
+              <h4 className={`font-mono text-xs uppercase tracking-widest ${chapterThemeConfig[unlockedChapterPrompt].colorClass} mb-4 font-bold`}>
+                {chapterThemeConfig[unlockedChapterPrompt].title}
+              </h4>
+
+              {/* Customized Heartfelt Message */}
+              <p className="text-zinc-300 text-sm md:text-base leading-relaxed mb-8 px-2">
+                {chapterThemeConfig[unlockedChapterPrompt].message}
+              </p>
+
+              {/* Option Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button
+                  onClick={() => handleOpenChapter(unlockedChapterPrompt)}
+                  className={`w-full sm:w-auto px-8 py-3 rounded-full bg-gradient-to-r ${chapterThemeConfig[unlockedChapterPrompt].gradientClass} hover:opacity-90 font-bold text-white text-sm tracking-wider uppercase cursor-pointer hover:shadow-lg active:scale-95 duration-200 flex items-center justify-center gap-2`}
+                >
+                  <span>Open It Now! 🗝️</span>
+                </button>
+                
+                <button
+                  onClick={() => {
+                    if (window.playUISfx) window.playUISfx('click');
+                    setUnlockedChapterPrompt(null);
+                  }}
+                  className="w-full sm:w-auto px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white font-medium text-xs tracking-wider uppercase border border-white/10 cursor-pointer active:scale-95 duration-200"
+                >
+                  Keep Matching 🧩
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 2. CUSTOM CONTINUE GAME PROMPT MODAL */}
+      <AnimatePresence>
+        {showContinuePrompt && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 30 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 30 }}
+              transition={{ type: 'spring', damping: 20 }}
+              className="relative w-full max-w-md rounded-3xl p-8 border border-white/10 bg-zinc-950/90 shadow-[0_0_50px_rgba(255,255,255,0.05)] text-center overflow-hidden"
+            >
+              {/* Ambient Glowing Background */}
+              <div className="absolute -top-20 -left-20 w-48 h-48 rounded-full blur-[80px] pointer-events-none bg-biolum-purple/10" />
+              <div className="absolute -bottom-20 -right-20 w-48 h-48 rounded-full blur-[80px] pointer-events-none bg-biolum-pink/10" />
+
+              {/* Game Icon */}
+              <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 mx-auto flex items-center justify-center text-amber-300 mb-6 animate-pulse">
+                <Trophy size={28} />
+              </div>
+
+              {/* Heading */}
+              <h3 className="font-serif text-2xl font-bold text-white mb-2 leading-tight">
+                Shall we continue the game? 🎮✨
+              </h3>
+              
+              <p className="text-zinc-400 text-xs font-mono uppercase tracking-wider mb-4">
+                Memory Vault Challenge
+              </p>
+
+              <p className="text-zinc-300 text-sm leading-relaxed mb-8">
+                There are more golden memory chapters waiting to be matched and unlocked! Shall we head back up to the game grid?
+              </p>
+
+              {/* Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button
+                  onClick={handleContinueGame}
+                  className="w-full sm:w-auto px-8 py-3 rounded-full bg-gradient-to-r from-biolum-pink to-biolum-purple hover:shadow-[0_0_20px_rgba(255,42,133,0.3)] font-bold text-white text-sm tracking-wider uppercase cursor-pointer active:scale-95 duration-200 flex items-center justify-center gap-2"
+                >
+                  <span>Yes, Back to Game! 🌟</span>
+                </button>
+                
+                <button
+                  onClick={handleStayOnGallery}
+                  className="w-full sm:w-auto px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white font-medium text-xs tracking-wider uppercase border border-white/10 cursor-pointer active:scale-95 duration-200"
+                >
+                  Stay and Browse 📸
+                </button>
               </div>
             </motion.div>
           </motion.div>
