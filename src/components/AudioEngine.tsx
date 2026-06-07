@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 declare global {
   interface Window {
     playUISfx?: (type: 'click' | 'success' | 'match' | 'teleport' | 'win') => void;
+    startBackgroundMusic?: () => void;
   }
 }
 
@@ -129,8 +130,48 @@ export const AudioEngine: React.FC = () => {
     audio.volume = 0.25; // Warm background level
     audioNodeRef.current = audio;
 
+    // Expose startBackgroundMusic globally
+    window.startBackgroundMusic = () => {
+      audio.play().then(() => {
+        setIsPlaying(true);
+        setIsMuted(false);
+      }).catch(err => {
+        console.log("Background music play failed:", err);
+      });
+    };
+
+    // Try playing immediately
+    audio.play().then(() => {
+      setIsPlaying(true);
+    }).catch(() => {
+      console.log("Autoplay blocked on mount. Waiting for user interaction.");
+    });
+
+    // Fallback interaction listener to start audio
+    const handleFirstInteraction = () => {
+      audio.play().then(() => {
+        setIsPlaying(true);
+        setIsMuted(false);
+        removeListeners();
+      }).catch(err => {
+        console.log("Interaction play blocked:", err);
+      });
+    };
+
+    const removeListeners = () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+
+    window.addEventListener('click', handleFirstInteraction);
+    window.addEventListener('touchstart', handleFirstInteraction);
+    window.addEventListener('keydown', handleFirstInteraction);
+
     return () => {
       window.playUISfx = undefined;
+      window.startBackgroundMusic = undefined;
+      removeListeners();
       audio.pause();
     };
   }, []);

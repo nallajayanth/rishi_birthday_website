@@ -6,7 +6,7 @@ interface CinematicIntroProps {
 }
 
 export const CinematicIntro: React.FC<CinematicIntroProps> = ({ onComplete }) => {
-  const [stage, setStage] = useState<'1A' | '1B'>('1A');
+  const [stage, setStage] = useState<'start' | '1A' | '1B'>('start');
   const [typedText, setTypedText] = useState('');
   const fullText = "A little surprise is waiting for you... Let's see what it is! 👀";
 
@@ -42,7 +42,64 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({ onComplete }) =>
   return (
     <div className="relative z-10 flex min-h-screen flex-col items-center justify-center bg-transparent px-6 text-center select-none">
       <AnimatePresence mode="wait">
-        {stage === '1A' ? (
+        {stage === 'start' && (
+          <motion.div
+            key="stage-start"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 1.2 }}
+            className="flex flex-col items-center justify-center space-y-8 max-w-lg"
+          >
+            <div className="relative">
+              <motion.div
+                className="absolute inset-0 bg-biolum-pink rounded-full opacity-10 blur-xl animate-pulse"
+                style={{ filter: 'blur(24px)' }}
+              />
+              <motion.h1 
+                className="font-serif text-3xl font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-violet-200 via-rose-300 to-amber-200 glow-pink md:text-5xl leading-tight text-center"
+                animate={{ 
+                  backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+                style={{ backgroundSize: '200% 200%' }}
+              >
+                A Magical Surprise Awaits... ✨
+              </motion.h1>
+            </div>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.8 }}
+              transition={{ delay: 0.6, duration: 1 }}
+              className="text-sm font-sans tracking-wide text-zinc-400 font-light leading-relaxed max-w-sm"
+            >
+              Put on your headphones or turn up your sound for the full experience.
+            </motion.p>
+
+            <motion.button
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1, type: 'spring' }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                if (window.startBackgroundMusic) {
+                  window.startBackgroundMusic();
+                }
+                if (window.playUISfx) {
+                  window.playUISfx('success');
+                }
+                setStage('1A');
+              }}
+              className="px-8 py-4 bg-gradient-to-r from-biolum-pink to-biolum-purple hover:shadow-[0_0_30px_rgba(255,42,133,0.5)] text-white font-bold rounded-full cursor-pointer shadow-lg flex items-center gap-2 group font-sans text-sm tracking-wider uppercase border border-white/15 transition-all duration-300"
+            >
+              <span>Open the Surprise 🎁</span>
+            </motion.button>
+          </motion.div>
+        )}
+
+        {stage === '1A' && (
           <motion.div
             key="stage-1a"
             initial={{ opacity: 0, y: 15 }}
@@ -70,7 +127,9 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({ onComplete }) =>
               A magical experience designed just for you
             </motion.p>
           </motion.div>
-        ) : (
+        )}
+
+        {stage === '1B' && (
           <motion.div
             key="stage-1b"
             initial={{ opacity: 0 }}
