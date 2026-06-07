@@ -93,77 +93,77 @@ const getFamilyPhotoMetadata = (index: number): PhotoMetadata => {
   const fileNum = index + 1;
   switch (fileNum) {
     case 1:
-      return { relation: "Brother & Sister 🛡️", caption: "Sibling protective bond & shared laughter", tags: ["Brother", "Rishi", "Childhood"] };
+      return { relation: "Brother & Sister 🛡️", caption: "A perfect selfie with my favorite brother and protector.", tags: ["Brother", "Rishi", "Family"] };
     case 2:
-      return { relation: "Mom's Love 👩‍🍼", caption: "A mother's warm hug and infinite blessing", tags: ["Mom", "Love", "Home"] };
+      return { relation: "Mom's Pure Love 👩‍🍼", caption: "A warm and gentle embrace from Mom when I was just a little baby.", tags: ["Mom", "Rishi", "Childhood", "Family"] };
     case 3:
-      return { relation: "Brother's Support 🛡️", caption: "Always standing strong behind his favorite sister", tags: ["Brother", "Support", "Together"] };
+      return { relation: "Sibling Hangouts ☕", caption: "Café dates and endless conversations with my brother, always cheering me on.", tags: ["Brother", "Rishi", "Family"] };
     case 4:
-      return { relation: "Siri's Smiles ✨", caption: "Radiant vibes and endless birthday cheer", tags: ["Rishi", "Portraits", "Joy"] };
+      return { relation: "Sister's Big Day 🌸", caption: "Standing beside my beautiful sister Sanju on her most special day.", tags: ["Sanju", "Rishi", "Celebration", "Family"] };
     case 5:
-      return { relation: "Sister (Rishi) 🌸", caption: "The beautiful star of our lives", tags: ["Rishi", "Birthday Girl", "Sister"] };
+      return { relation: "Sisterhood Moments ✨", caption: "Captured in a sweet moment of love and joy with sister Sanju.", tags: ["Sanju", "Rishi", "Celebration", "Family"] };
     case 6:
-      return { relation: "Family Circle 🏡", caption: "Where life begins and love never ends", tags: ["Family", "Together", "Home"] };
+      return { relation: "Sisterhood Memories 👭", caption: "A precious photobooth collage of our younger, playful days.", tags: ["Sanju", "Rishi", "Childhood"] };
     case 7:
-      return { relation: "Festive Joy 🪔", caption: "Lighting up our home with sweet celebrations", tags: ["Celebration", "Festival", "Home"] };
+      return { relation: "Wedding Blessings 🏡", caption: "Celebrating sister Sanju's wedding with Mom, brother, and the family.", tags: ["Family", "Mom", "Sanju", "Brother", "Rishi", "Celebration"] };
     case 8:
-      return { relation: "Mom's Guidance 💖", caption: "Her gentle words are our daily strength", tags: ["Mom", "Blessing", "Family"] };
+      return { relation: "Haldi Prep Fun 💛", caption: "Preparing for the Haldi rituals with laughter and yellow colors.", tags: ["Sanju", "Rishi", "Celebration"] };
     case 9:
-      return { relation: "Sisterhood Sparkle 👭", caption: "Shared secrets and lifetime moments", tags: ["Rishi", "Sister", "Sparkle"] };
+      return { relation: "Haldi Glow ✨", caption: "Glowing with happiness and pure yellow vibes at the Haldi ceremony.", tags: ["Sanju", "Rishi", "Celebration"] };
     case 10:
-      return { relation: "Family Gathering 🍽️", caption: "Delicious meals and loudest laughter", tags: ["Family", "Gathering", "Food"] };
+      return { relation: "Haldi Gathering 🏡", caption: "A perfect group photo with brother, Pinni, sister Sanju, and the family.", tags: ["Family", "Pinni", "Sanju", "Brother", "Rishi", "Celebration"] };
     case 11:
-      return { relation: "Sibling Teasing 🤪", caption: "Fighting all day, but inseparable always", tags: ["Brother", "Teasing", "Sibling"] };
+      return { relation: "Sisterly Love 🌸", caption: "Sanju in her lavender lehenga sharing a sweet moment with Rishi.", tags: ["Sanju", "Rishi", "Celebration"] };
     case 12:
-      return { relation: "Mom's Pride 🥰", caption: "Watching her children grow with pride", tags: ["Mom", "Love", "Pride"] };
+      return { relation: "Pre-Wedding Joy 💛", caption: "Sharing laughter and posing with brother, Pinni, and Sanju.", tags: ["Family", "Pinni", "Sanju", "Brother", "Rishi", "Celebration"] };
     case 13:
-      return { relation: "Holiday Escape 🏖️", caption: "Sunny days and waves of happiness", tags: ["Trip", "Vacation", "Family"] };
+      return { relation: "Cool Girls 🕶️", caption: "Rocking sunglasses and striking a cool pose with Sanju and cousins.", tags: ["Sanju", "Rishi", "Celebration"] };
     case 14:
-      return { relation: "Celebrations 🎉", caption: "Cheering for another beautiful year", tags: ["Celebration", "Party", "Joy"] };
+      return { relation: "Candid Poses 📸", caption: "Fun, style, and attitude! Posing with sunglasses at the pre-wedding event.", tags: ["Sanju", "Rishi", "Celebration"] };
     case 15:
-      return { relation: "Rishi's Charm 🌟", caption: "Spreading warmth wherever she goes", tags: ["Rishi", "Sister", "Portraits"] };
+      return { relation: "Sanju's Wedding ✨", caption: "Wishing my sister Sanju a lifetime of happiness on her big day.", tags: ["Sanju", "Rishi", "Celebration", "Family"] };
     case 16:
-      return { relation: "Family Portrait 🏡", caption: "Complete, united, and infinitely blessed", tags: ["Family", "Together", "Main"] };
+      return { relation: "Family Portrait 🏡", caption: "The ultimate family picture featuring Dad, Mom, Sanju, the groom, and myself.", tags: ["Family", "Mom", "Sanju", "Rishi", "Celebration"] };
     case 17:
-      return { relation: "Winter Warmth ☕", caption: "Chilly evenings made warm by family conversations", tags: ["Family", "Conversations", "Home"] };
+      return { relation: "Sister's Hug 🤗", caption: "Sanju hugging me tightly from behind, our bond is forever.", tags: ["Sanju", "Rishi", "Family"] };
     case 18:
-      return { relation: "Mom's Smile 😊", caption: "Her smile makes the entire house glow", tags: ["Mom", "Smile", "Love"] };
+      return { relation: "Best Company 🌸", caption: "Dressed in traditional wear and flashing smiles at the wedding event.", tags: ["Sanju", "Rishi", "Celebration"] };
     case 19:
-      return { relation: "Road Trip 🚗", caption: "Exploring new horizons together", tags: ["Trip", "Travel", "Adventure"] };
+      return { relation: "Pinni's Cake Attack 🎂", caption: "Pinni trying to smear cake on my face during my birthday celebration!", tags: ["Pinni", "Celebration", "Birthday", "Rishi"] };
     case 20:
-      return { relation: "Pinni's Banter 🤪", caption: "The playful arguments that we cherish", tags: ["Pinni", "Tom & Jerry", "Teasing"] };
+      return { relation: "Pinni's Banter 🤪", caption: "A sweet laugh with Pinni as we celebrate my birthday together.", tags: ["Pinni", "Celebration", "Birthday", "Rishi"] };
     case 21:
-      return { relation: "Playful Pinni 🎭", caption: "Arguments, reverse talk, and absolute love", tags: ["Pinni", "Tom & Jerry", "Wishes"] };
+      return { relation: "Night Festivities 🌌", caption: "A lovely night out posing with Pinni in the illuminated garden.", tags: ["Pinni", "Rishi", "Celebration"] };
     case 22:
-      return { relation: "Sunday Brunch 🥞", caption: "Relaxed mornings and endless cups of chai", tags: ["Family", "Weekend", "Together"] };
+      return { relation: "The Trio's Smile 💖", caption: "Selfie series: Posing happily with Mom and Pinni in our traditional wear.", tags: ["Family", "Mom", "Pinni", "Rishi"] };
     case 23:
-      return { relation: "Brotherly Love 🛡️", caption: "He will always fight the world for you", tags: ["Brother", "Protector", "Sibling"] };
+      return { relation: "Mom, Pinni & Siri 💕", caption: "Capturing a warm selfie with my two main pillars of support.", tags: ["Family", "Mom", "Pinni", "Rishi"] };
     case 24:
-      return { relation: "Mom's Comfort 🤗", caption: "The safest place in the world is her hug", tags: ["Mom", "Comfort", "Blessing"] };
+      return { relation: "Sweetest Smiles 😊", caption: "Enjoying a candid moment of joy with Mom and Pinni.", tags: ["Family", "Mom", "Pinni", "Rishi"] };
     case 25:
-      return { relation: "Birthday Bash 🎂", caption: "Cutting cakes and making magical wishes", tags: ["Celebration", "Birthday", "Cake"] };
+      return { relation: "The Perfect Trio 🌸", caption: "Selfie series: Wrapping up our lovely photoshoot with Mom and Pinni.", tags: ["Family", "Mom", "Pinni", "Rishi"] };
     case 26:
-      return { relation: "Pinni's Support 🤍", caption: "She is always cheering loudest for you", tags: ["Pinni", "Support", "Wishes"] };
+      return { relation: "Mom's Warm Embrace 👩‍🍼", caption: "Sharing a quiet, warm, and loving moment with Mom at the venue.", tags: ["Mom", "Rishi", "Celebration", "Family"] };
     case 27:
-      return { relation: "Rishi's Journey 🚀", caption: "Conquering goals and writing new adventures", tags: ["Rishi", "Future", "Portraits"] };
+      return { relation: "Temple Blessings 🛕", caption: "Blessed temple visit with Mom and Pinni, with the Shiva statue behind us.", tags: ["Family", "Mom", "Pinni", "Rishi", "Trip"] };
     case 28:
-      return { relation: "Sweet Home 🏡", caption: "Where every corner holds a memory", tags: ["Family", "Home", "Love"] };
+      return { relation: "Mom's Grace ✨", caption: "Sharing a beautiful smile with Mom dressed in her elegant light green saree.", tags: ["Mom", "Rishi", "Celebration", "Family"] };
     case 29:
-      return { relation: "Sibling Secrets 🤫", caption: "We share jokes that only we understand", tags: ["Sibling", "Brother", "Secrets"] };
+      return { relation: "On The Move! 🚗", caption: "Thumbs up for our travel adventures! Fun times riding with Pinni.", tags: ["Pinni", "Trip", "Rishi"] };
     case 30:
-      return { relation: "Mom's Hug 👩‍🍼", caption: "Her embrace shields us from all storms", tags: ["Mom", "Love", "Comfort"] };
+      return { relation: "Hilltop Escapades ⛰️", caption: "Siri and Pinni enjoying the fresh air and views from a hilltop temple.", tags: ["Pinni", "Trip", "Rishi"] };
     case 31:
-      return { relation: "Grand Dinner 🥂", caption: "Celebrating milestones and shared successes", tags: ["Celebration", "Family", "Together"] };
+      return { relation: "Sacred Moments 🛕", caption: "Seeking blessings at the temple with Mom and Pinni by my side.", tags: ["Family", "Mom", "Pinni", "Rishi", "Trip"] };
     case 32:
-      return { relation: "Pinni's Love 🤪", caption: "Teasing is just her way of saying she cares", tags: ["Pinni", "Love", "Tom & Jerry"] };
+      return { relation: "Mom's Birthday Love 🎂", caption: "Mom giving me a sweet kiss on the cheek on my special birthday.", tags: ["Mom", "Celebration", "Birthday", "Rishi"] };
     case 33:
-      return { relation: "Outing Day 🌳", caption: "Green grass, blue skies, and warm hearts", tags: ["Trip", "Outing", "Together"] };
+      return { relation: "Climbing Together ⛰️", caption: "Reaching the top! Posing for a scenic selfie with Pinni on our trek.", tags: ["Pinni", "Trip", "Rishi"] };
     case 34:
-      return { relation: "Rishi's Dreams ✨", caption: "Shining bright with expectations and goals", tags: ["Rishi", "Dreams", "Future"] };
+      return { relation: "Mom's Warm Support 💕", caption: "Mom standing proud and beautiful beside me at the family celebration.", tags: ["Mom", "Rishi", "Celebration", "Family"] };
     case 35:
-      return { relation: "A Mother's Blessing 🌹", caption: "Her prayers are your silent shield", tags: ["Mom", "Blessing", "Chapter 2"] };
+      return { relation: "Birthday Stage 🌟", caption: "Posing with Mom on the birthday stage decorated with beautiful greenery.", tags: ["Mom", "Celebration", "Birthday", "Rishi"] };
     case 36:
-      return { relation: "Forever Together 💞", caption: "Bounded by love, today and for all tomorrows", tags: ["Family", "Love", "Together"] };
+      return { relation: "School Pride 🎒", caption: "Siri holding the Roses house placard proudly with Pinni and family.", tags: ["Childhood", "Pinni", "Rishi", "Family"] };
     default:
       return { relation: "Family Memory 📸", caption: "A beautiful moment captured in time", tags: ["Family", "Memory"] };
   }
@@ -427,7 +427,7 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
   // Filter state for Family Album
   const [selectedFamilyTag, setSelectedFamilyTag] = useState<string>('All');
   
-  const familyTagsList = ['All', 'Family', 'Rishi', 'Mom', 'Pinni', 'Brother', 'Trip', 'Celebration'];
+  const familyTagsList = ['All', 'Family', 'Rishi', 'Mom', 'Pinni', 'Brother', 'Sanju', 'Trip', 'Celebration'];
   
   const filteredFamilyImages = familyImageUrls.map((url, idx) => ({
     url,
@@ -546,7 +546,7 @@ export const FamilyMemoryVault: React.FC<FamilyMemoryVaultProps> = ({
       title: "Chapter 1: The Circle of Warmth",
       quote: "Family is where life begins and love never ends.",
       story: "Siri, you are the heartbeat of our family. Together, we have built a sanctuary of laughter, shared meals, and unwavering strength. No matter where we go, we are bound by a love that is unconditional and forever. You are our greatest strength.",
-      image: familyImageUrls[5] || fallbackImages[4],
+      image: familyImageUrls[15] || fallbackImages[4],
       themeColor: "from-pink-500/20 to-purple-500/20",
       icon: <Home size={20} className="text-pink-400 animate-pulse" />
     },
